@@ -145,6 +145,27 @@ final class PhilosofeetCORE {
 
         if ($is_dev) {
             // Development mode: Load from Vite dev server
+            // Register the script first
+            wp_register_script(
+                'philosofeet-core-react',
+                'http://localhost:5173/assets/js/src/index.js',
+                [],
+                null,
+                true
+            );
+
+            // Add global config before enqueuing
+            wp_localize_script('philosofeet-core-react', 'philosofeetCore', [
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('philosofeet_core_nonce'),
+                'assetsUrl' => PHILOSOFEET_CORE_ASSETS_URL,
+                'isDev' => true,
+            ]);
+
+            // Now enqueue
+            wp_enqueue_script('philosofeet-core-react');
+
+            // Enqueue Vite client separately
             wp_enqueue_script(
                 'philosofeet-core-vite-client',
                 'http://localhost:5173/@vite/client',
@@ -153,30 +174,32 @@ final class PhilosofeetCORE {
                 true
             );
 
-            wp_enqueue_script(
-                'philosofeet-core-react',
-                'http://localhost:5173/assets/js/src/index.js',
-                [],
-                null,
-                true
-            );
-
-            // Add type="module" attribute
+            // Add type="module" attribute and crossorigin
             add_filter('script_loader_tag', function($tag, $handle) {
                 if (in_array($handle, ['philosofeet-core-vite-client', 'philosofeet-core-react'])) {
-                    return str_replace('<script ', '<script type="module" ', $tag);
+                    $tag = str_replace('<script ', '<script type="module" crossorigin ', $tag);
                 }
                 return $tag;
             }, 10, 2);
         } else {
             // Production mode: Load built files
-            wp_enqueue_script(
+            wp_register_script(
                 'philosofeet-core-react',
                 PHILOSOFEET_CORE_ASSETS_URL . 'js/dist/main.js',
                 [],
                 PHILOSOFEET_CORE_VERSION,
                 true
             );
+
+            // Pass global config to React
+            wp_localize_script('philosofeet-core-react', 'philosofeetCore', [
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('philosofeet_core_nonce'),
+                'assetsUrl' => PHILOSOFEET_CORE_ASSETS_URL,
+                'isDev' => false,
+            ]);
+
+            wp_enqueue_script('philosofeet-core-react');
 
             // Add type="module" attribute for production build
             add_filter('script_loader_tag', function($tag, $handle) {
@@ -186,14 +209,6 @@ final class PhilosofeetCORE {
                 return $tag;
             }, 10, 2);
         }
-
-        // Pass global config to React
-        wp_localize_script('philosofeet-core-react', 'philosofeetCore', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('philosofeet_core_nonce'),
-            'assetsUrl' => PHILOSOFEET_CORE_ASSETS_URL,
-            'isDev' => $is_dev,
-        ]);
     }
 
     /**

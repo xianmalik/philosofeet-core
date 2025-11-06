@@ -3,7 +3,12 @@ import React from 'react';
 /**
  * Circular Wheel Widget Component
  *
- * Renders a circular wheel with groups, times, and images
+ * Renders a circular wheel with the following structure (outer to inner):
+ * 1. Outer thin ring: Group titles (Spring, Summer, Fall, Winter)
+ * 2. Images: Positioned between outer and middle rings
+ * 3. Middle ring: Time slices (Morning, Afternoon, Evening, Night)
+ * 4. Inner ring: Group types (Heels, Boots, Flats, Sneakers)
+ * 5. Center circle: Icon/Logo
  */
 const CircularWheelWidget = ({ widgetId, settings }) => {
   const {
@@ -21,31 +26,38 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
     centerIconSize = { size: 80, unit: 'px' },
   } = settings;
 
-  // Calculate dimensions
+  // Calculate dimensions matching the reference image
   const wheelSizeValue = `${wheelSize.size}${wheelSize.unit}`;
-  const ringWidthPercent = ringWidth.size;
-  const innerRingWidthPercent = innerRingWidth.size;
-  const centerCircleSizePercent = centerCircleSize.size;
   const gapSizeValue = gapSize.size;
+  const centerCircleSizePercent = centerCircleSize.size;
+
+  // Layer radii (from center outward) - ALL EQUAL WIDTH
+  const centerRadius = (centerCircleSizePercent / 2) / 2; // Reduced to half (~7.5%)
+  const gap = 0.5; // Small gap between layers
+
+  // Calculate equal layer width for 4 layers (types, times, images, titles)
+  const availableRadius = 50 - centerRadius - (gap * 5); // 5 gaps total
+  const layerWidth = availableRadius / 4; // Equal width for all 4 layers
+
+  // Layer 1: Inner ring (types)
+  const innerRingInner = centerRadius + gap;
+  const innerRingOuter = innerRingInner + layerWidth;
+
+  // Layer 2: Middle ring (times)
+  const middleRingInner = innerRingOuter + gap;
+  const middleRingOuter = middleRingInner + layerWidth;
+
+  // Layer 3: Image layer (dedicated space)
+  const imageLayerInner = middleRingOuter + gap;
+  const imageLayerOuter = imageLayerInner + layerWidth;
+
+  // Layer 4: Outer ring (titles)
+  const outerRingInner = imageLayerOuter + gap;
+  const outerRingOuter = outerRingInner + layerWidth; // Should reach ~50
 
   // Calculate angles for each group
   const totalGroups = groups.length;
   const anglePerGroup = 360 / totalGroups;
-
-  /**
-   * Calculate the color brightness and return appropriate text color
-   */
-  const getContrastColor = (hexColor) => {
-    // Convert hex to RGB
-    const r = Number.parseInt(hexColor.substr(1, 2), 16);
-    const g = Number.parseInt(hexColor.substr(3, 2), 16);
-    const b = Number.parseInt(hexColor.substr(5, 2), 16);
-
-    // Calculate brightness
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-    return brightness > 128 ? '#000000' : '#ffffff';
-  };
 
   /**
    * Darken a color by a percentage
@@ -58,6 +70,21 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
     const newR = Math.floor(r * (1 - percent / 100));
     const newG = Math.floor(g * (1 - percent / 100));
     const newB = Math.floor(b * (1 - percent / 100));
+
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  };
+
+  /**
+   * Lighten a color by a percentage
+   */
+  const lightenColor = (hexColor, percent) => {
+    const r = Number.parseInt(hexColor.substr(1, 2), 16);
+    const g = Number.parseInt(hexColor.substr(3, 2), 16);
+    const b = Number.parseInt(hexColor.substr(5, 2), 16);
+
+    const newR = Math.floor(r + (255 - r) * (percent / 100));
+    const newG = Math.floor(g + (255 - g) * (percent / 100));
+    const newB = Math.floor(b + (255 - b) * (percent / 100));
 
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   };
@@ -101,13 +128,26 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   };
 
   /**
-   * Calculate rotation for text
+   * Calculate rotation for text (outer ring - always upright)
    */
   const calculateRotation = (angle) => {
-    // Adjust rotation so text is always readable
+    // Adjust rotation so text is always readable (flip on bottom half)
     let rotation = angle;
     if (angle > 90 && angle < 270) {
       rotation = angle + 180;
+    }
+    return rotation;
+  };
+
+  /**
+   * Calculate rotation for inner ring text (perpendicular to radius)
+   */
+  const calculateInnerRotation = (angle) => {
+    // Text should follow the circle, perpendicular to radius
+    // On the left side (90-270), add 180 to keep text upright
+    let rotation = angle - 90; // Start perpendicular
+    if (angle > 90 && angle < 270) {
+      rotation = angle + 90; // Flip for left side
     }
     return rotation;
   };
@@ -134,39 +174,33 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           </filter>
         </defs>
 
-        {/* Render outer ring segments (groups) */}
-        {groups.map((group, index) => {
-          const startAngle = index * anglePerGroup;
-          const endAngle = (index + 1) * anglePerGroup - gapSizeValue / 5;
-          const outerRadius = 50;
-          const innerRadius = 50 - ringWidthPercent;
+        {/* LAYER 1: Outer thin ring - Group titles (Spring, Summer, Fall, Winter) */}
+        {groups.map((group, groupIndex) => {
+          const startAngle = groupIndex * anglePerGroup;
+          const endAngle = (groupIndex + 1) * anglePerGroup - gapSizeValue / 10;
 
           const midAngle = (startAngle + endAngle) / 2;
-          const textRadius = outerRadius - ringWidthPercent / 2;
+          const textRadius = (outerRingInner + outerRingOuter) / 2;
           const textPos = calculatePosition(midAngle, textRadius);
           const textRotation = calculateRotation(midAngle);
 
-          const imageRadius = outerRadius + 5; // Position images outside the ring
-          const imagePos = calculatePosition(midAngle, imageRadius);
-
           return (
-            <g key={`group-${index}`}>
-              {/* Outer segment */}
+            <g key={`outer-${group.title}-${groupIndex}`}>
+              {/* Outer ring segment */}
               <path
-                d={createSegmentPath(startAngle, endAngle, innerRadius, outerRadius)}
+                d={createSegmentPath(startAngle, endAngle, outerRingInner, outerRingOuter)}
                 fill={group.color}
-                stroke="rgba(0,0,0,0.1)"
-                strokeWidth="0.2"
-                filter={`url(#shadow-${widgetId})`}
-                className="wheel-segment"
+                stroke="rgba(0,0,0,0.2)"
+                strokeWidth="0.1"
+                className="wheel-segment wheel-outer-segment"
               />
 
               {/* Group title text */}
               <text
                 x={textPos.x}
                 y={textPos.y}
-                fill={groupTitleColor || getContrastColor(group.color)}
-                fontSize="3"
+                fill={groupTitleColor}
+                fontSize="1.75"
                 fontWeight="bold"
                 textAnchor="middle"
                 dominantBaseline="middle"
@@ -175,67 +209,79 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
               >
                 {group.title.toUpperCase()}
               </text>
-
-              {/* Group image */}
-              {group.image && (
-                <image
-                  href={group.image}
-                  x={imagePos.x - 3}
-                  y={imagePos.y - 3}
-                  width="6"
-                  height="6"
-                  className="wheel-segment-image"
-                  preserveAspectRatio="xMidYMid meet"
-                />
-              )}
             </g>
           );
         })}
 
-        {/* Render inner ring segments (times) */}
+        {/* LAYER 2: Images in dedicated layer */}
+        {groups.map((group, groupIndex) => {
+          if (!group.image) return null;
+
+          const startAngle = groupIndex * anglePerGroup;
+          const endAngle = (groupIndex + 1) * anglePerGroup;
+          const midAngle = (startAngle + endAngle) / 2;
+
+          // Position images in dedicated image layer
+          const imageRadius = (imageLayerInner + imageLayerOuter) / 2;
+          const imagePos = calculatePosition(midAngle, imageRadius);
+
+          return (
+            <image
+              key={`image-${groupIndex}`}
+              href={group.image}
+              x={imagePos.x - 2.5}
+              y={imagePos.y - 2.5}
+              width="5"
+              height="5"
+              className="wheel-segment-image"
+              preserveAspectRatio="xMidYMid meet"
+            />
+          );
+        })}
+
+        {/* LAYER 3: Middle ring - Time slices (Morning, Afternoon, Evening, Night) */}
         {groups.map((group, groupIndex) => {
           const times = group.times || [];
+          if (times.length === 0) return null;
+
           const groupStartAngle = groupIndex * anglePerGroup;
           const groupEndAngle = (groupIndex + 1) * anglePerGroup;
           const anglePerTime = (groupEndAngle - groupStartAngle) / times.length;
 
-          const outerRadius = 50 - ringWidthPercent - 1;
-          const innerRadius = outerRadius - innerRingWidthPercent;
-
-          // Darker shade for inner ring
-          const innerColor = darkenColor(group.color, 20);
+          // Use slightly lighter color for middle ring
+          const middleColor = lightenColor(group.color, 10);
 
           return times.map((time, timeIndex) => {
             const startAngle = groupStartAngle + timeIndex * anglePerTime;
-            const endAngle = groupStartAngle + (timeIndex + 1) * anglePerTime - gapSizeValue / 5;
+            const endAngle = groupStartAngle + (timeIndex + 1) * anglePerTime - gapSizeValue / 10;
 
             const midAngle = (startAngle + endAngle) / 2;
-            const textRadius = outerRadius - innerRingWidthPercent / 2;
+            const textRadius = (middleRingInner + middleRingOuter) / 2;
             const textPos = calculatePosition(midAngle, textRadius);
-            const textRotation = calculateRotation(midAngle);
+            const textRotation = calculateInnerRotation(midAngle);
 
             return (
-              <g key={`time-${groupIndex}-${timeIndex}`}>
-                {/* Inner segment */}
+              <g key={`middle-${groupIndex}-${timeIndex}`}>
+                {/* Middle ring segment */}
                 <path
-                  d={createSegmentPath(startAngle, endAngle, innerRadius, outerRadius)}
-                  fill={innerColor}
-                  stroke="rgba(0,0,0,0.1)"
-                  strokeWidth="0.2"
-                  filter={`url(#shadow-${widgetId})`}
-                  className="wheel-inner-segment"
+                  d={createSegmentPath(startAngle, endAngle, middleRingInner, middleRingOuter)}
+                  fill={middleColor}
+                  stroke="rgba(0,0,0,0.2)"
+                  strokeWidth="0.1"
+                  className="wheel-segment wheel-middle-segment"
                 />
 
                 {/* Time text */}
                 <text
                   x={textPos.x}
                   y={textPos.y}
-                  fill={timeColor || getContrastColor(innerColor)}
-                  fontSize="2"
+                  fill={timeColor}
+                  fontSize="1"
+                  fontWeight="500"
                   textAnchor="middle"
                   dominantBaseline="middle"
                   transform={`rotate(${textRotation}, ${textPos.x}, ${textPos.y})`}
-                  className="wheel-inner-segment-text"
+                  className="wheel-segment-text"
                 >
                   {time.toUpperCase()}
                 </text>
@@ -244,24 +290,70 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           });
         })}
 
-        {/* Center circle */}
+        {/* LAYER 4: Inner ring - Group types (Heels, Boots, Flats, Sneakers) */}
+        {groups.map((group, groupIndex) => {
+          const startAngle = groupIndex * anglePerGroup;
+          const endAngle = (groupIndex + 1) * anglePerGroup - gapSizeValue / 10;
+
+          const midAngle = (startAngle + endAngle) / 2;
+          const textRadius = (innerRingInner + innerRingOuter) / 2;
+          const textPos = calculatePosition(midAngle, textRadius);
+          const textRotation = calculateInnerRotation(midAngle);
+
+          // Use darker color for inner ring
+          const innerColor = darkenColor(group.color, 30);
+          const typeLabel = group.type || '';
+
+          return (
+            <g key={`inner-${groupIndex}`}>
+              {/* Inner ring segment - ONE per group */}
+              <path
+                d={createSegmentPath(startAngle, endAngle, innerRingInner, innerRingOuter)}
+                fill={innerColor}
+                stroke="rgba(0,0,0,0.2)"
+                strokeWidth="0.1"
+                className="wheel-segment wheel-inner-segment"
+              />
+
+              {/* Type text - ONE per group */}
+              {typeLabel && (
+                <text
+                  x={textPos.x}
+                  y={textPos.y}
+                  fill={timeColor}
+                  fontSize="1.2"
+                  fontWeight="400"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  transform={`rotate(${textRotation}, ${textPos.x}, ${textPos.y})`}
+                  className="wheel-inner-segment-text"
+                >
+                  {typeLabel.toUpperCase()}
+                </text>
+              )}
+            </g>
+          );
+        })}
+
+        {/* LAYER 5: Center circle with icon/logo */}
         <circle
           cx="50"
           cy="50"
-          r={centerCircleSizePercent / 2}
+          r={centerRadius}
           className="wheel-center"
           fill="#000000"
-          filter={`url(#shadow-${widgetId})`}
+          stroke="rgba(255,255,255,0.1)"
+          strokeWidth="0.2"
         />
 
         {/* Center icon or text */}
         {centerIcon ? (
           <image
             href={centerIcon}
-            x={50 - centerCircleSizePercent / 4}
-            y={50 - centerCircleSizePercent / 4}
-            width={centerCircleSizePercent / 2}
-            height={centerCircleSizePercent / 2}
+            x={50 - centerRadius * 0.4}
+            y={50 - centerRadius * 0.4}
+            width={centerRadius * 0.8}
+            height={centerRadius * 0.8}
             className="wheel-center-icon"
             preserveAspectRatio="xMidYMid meet"
           />
