@@ -1,0 +1,34 @@
+{
+  "name": "philosofeet-core",
+  "version": "1.0.0",
+  "description": "Custom Elementor widgets with React-based frontend rendering",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "run-s lint build:assets",
+    "build:assets": "vite build",
+    "build:prod": "vite build",
+    "package": "run-s clean build:prod package:prepare package:zip",
+    "package:prepare": "node scripts/prepare-release.js",
+    "package:zip": "node scripts/create-zip.js",
+    "preview": "vite preview",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "clean": "node scripts/clean.js"
+  },
+  "keywords": ["wordpress", "elementor", "react", "widgets"],
+  "author": "Your Name",
+  "license": "GPL-2.0-or-later",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "archiver": "^7.0.1",
+    "npm-run-all2": "^7.0.2",
+    "vite": "^5.4.11"
+  }
+}

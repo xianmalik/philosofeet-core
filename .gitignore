@@ -1,0 +1,41 @@
+# Node modules
+node_modules/
+
+# Build files
+assets/js/dist/
+
+# Release files
+release/
+*.zip
+
+# Vite dev mode marker
+.vite-dev
+
+# Nadle cache
+.nadle/
+
+# WordPress
+*.log
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment files
+.env
+.env.local
+
+# AI Agent Files
+.claude

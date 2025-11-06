@@ -1,0 +1,3 @@
+# Create a file named .vite-dev (without extension) to enable Vite dev mode
+# This tells WordPress to load assets from the Vite dev server instead of built files
+# Make sure WP_DEBUG is true in wp-config.php

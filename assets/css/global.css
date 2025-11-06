@@ -1,0 +1,74 @@
+/**
+ * Philosofeet Core - Global Styles
+ *
+ * This stylesheet contains global styles for all Philosofeet widgets
+ */
+
+/* Widget Base Styles */
+.philosofeet-widget {
+  box-sizing: border-box;
+}
+
+.philosofeet-widget *,
+.philosofeet-widget *::before,
+.philosofeet-widget *::after {
+  box-sizing: inherit;
+}
+
+/* Widget Wrapper */
+.philosofeet-widget-wrapper {
+  width: 100%;
+}
+
+/* Error States */
+.philosofeet-widget-error {
+  padding: 20px;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  color: #856404;
+}
+
+.philosofeet-widget-error p {
+  margin: 0;
+}
+
+/* Loading States */
+.philosofeet-widget-loading {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+/* Placeholder (Editor Preview) */
+.philosofeet-widget-placeholder {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  text-align: center;
+  color: #666;
+}
+
+/* Example Widget Styles (remove when creating real widgets) */
+.philosofeet-example-widget {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.philosofeet-example-widget h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.philosofeet-example-widget .widget-content {
+  margin-top: 15px;
+}
+
+/* Responsive Base Styles */
+@media (max-width: 768px) {
+  .philosofeet-widget-wrapper {
+    padding: 10px;
+  }
+}
