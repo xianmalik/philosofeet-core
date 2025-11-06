@@ -54,7 +54,8 @@ final class PhilosofeetCORE {
      */
     private function __construct() {
         add_action('init', [$this, 'i18n']);
-        add_action('plugins_loaded', [$this, 'init']);
+        // Call init directly since we're already in plugins_loaded
+        $this->init();
     }
 
     /**
@@ -68,11 +69,16 @@ final class PhilosofeetCORE {
      * Initialize the plugin
      */
     public function init() {
+        error_log('Philosofeet: Plugin init() called');
+
         // Check if Elementor is installed and activated
         if (!did_action('elementor/loaded')) {
+            error_log('Philosofeet ERROR: Elementor not loaded');
             add_action('admin_notices', [$this, 'admin_notice_missing_elementor']);
             return;
         }
+
+        error_log('Philosofeet: Elementor is loaded');
 
         // Check for required Elementor version
         if (!version_compare(ELEMENTOR_VERSION, self::MINIMUM_ELEMENTOR_VERSION, '>=')) {
@@ -88,9 +94,15 @@ final class PhilosofeetCORE {
 
         // Load plugin files
         $this->includes();
+        error_log('Philosofeet: Plugin files included');
+
+        // Register Elementor category
+        add_action('elementor/elements/categories_registered', [$this, 'register_widget_categories'], 10);
+        error_log('Philosofeet: Category registration hook added');
 
         // Register widgets
-        add_action('elementor/widgets/register', [$this, 'register_widgets']);
+        add_action('elementor/widgets/register', [$this, 'register_widgets'], 10);
+        error_log('Philosofeet: Widget registration hook added');
 
         // Register scripts and styles
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_scripts']);
@@ -105,11 +117,28 @@ final class PhilosofeetCORE {
     }
 
     /**
+     * Register widget categories
+     */
+    public function register_widget_categories($elements_manager) {
+        error_log('Philosofeet: register_widget_categories() called');
+        $elements_manager->add_category(
+            'philosofeet',
+            [
+                'title' => __('Philosofeet', 'philosofeet-core'),
+                'icon' => 'fa fa-plug',
+            ]
+        );
+        error_log('Philosofeet: Category "philosofeet" registered');
+    }
+
+    /**
      * Register widgets
      */
     public function register_widgets($widgets_manager) {
+        error_log('Philosofeet: register_widgets() called');
         $widget_manager = new Widget_Manager();
         $widget_manager->register_widgets($widgets_manager);
+        error_log('Philosofeet: Widget manager register_widgets() completed');
     }
 
     /**

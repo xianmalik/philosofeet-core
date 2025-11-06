@@ -7,10 +7,12 @@
 
 // Example widget imports (uncomment and add as you create widgets):
 // import ExampleWidget from './ExampleWidget';
+import CircularWheelWidget from './CircularWheelWidget';
 
 const widgetComponents = {
   // Register your widgets here
   // 'example-widget': ExampleWidget,
+  'circular-wheel': CircularWheelWidget,
 };
 
 export default widgetComponents;
