@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Philosofeet Core
- * Plugin URI: https://example.com/philosofeet-core
+ * Plugin URI: https://paperhouse.agency
  * Description: Custom Elementor widgets with React-based frontend rendering
  * Version: 1.0.0
- * Author: Your Name
- * Author URI: https://example.com
+ * Author: PaperHouse
+ * Author URI: https://paperhouse.agency
  * Text Domain: philosofeet-core
  * Domain Path: /languages
  * Requires at least: 5.8

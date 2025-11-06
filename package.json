@@ -18,7 +18,10 @@
     "clean": "node scripts/clean.js"
   },
   "keywords": ["wordpress", "elementor", "react", "widgets"],
-  "author": "Your Name",
+  "author": {
+    "name": "PaperHouse",
+    "url": "https://paperhouse.agency"
+  },
   "license": "GPL-2.0-or-later",
   "dependencies": {
     "react": "^18.3.1",
