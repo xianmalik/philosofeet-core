@@ -111,7 +111,7 @@
   user-select: none;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .philosofeet-circular-wheel .wheel-inner-segment-text {
@@ -119,7 +119,7 @@
   user-select: none;
   text-transform: uppercase;
   letter-spacing: 0.2px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .philosofeet-circular-wheel .wheel-segment-image {
@@ -139,7 +139,7 @@
 }
 
 .philosofeet-circular-wheel .wheel-center-text {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: bold;
   text-transform: uppercase;
 }

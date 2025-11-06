@@ -20,8 +20,6 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-error_log('Philosofeet: Main plugin file loaded');
-
 // Plugin constants
 define('PHILOSOFEET_CORE_VERSION', '1.0.0');
 define('PHILOSOFEET_CORE_FILE', __FILE__);
@@ -36,18 +34,9 @@ define('PHILOSOFEET_CORE_ASSETS_PATH', PHILOSOFEET_CORE_PATH . 'assets/');
 require_once PHILOSOFEET_CORE_PATH . 'includes/class-philosofeet-core.php';
 
 /**
- * Load debug helper if WP_DEBUG is enabled
- */
-if (defined('WP_DEBUG') && WP_DEBUG) {
-    require_once PHILOSOFEET_CORE_PATH . 'debug-widgets.php';
-}
-
-/**
  * Initialize the plugin
  */
 function philosofeet_core_init() {
-    error_log('Philosofeet: philosofeet_core_init() function called');
     \Philosofeet\PhilosofeetCORE::instance();
 }
-error_log('Philosofeet: Adding plugins_loaded hook');
 add_action('plugins_loaded', __NAMESPACE__ . '\philosofeet_core_init');

@@ -66,8 +66,8 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
    * Create SVG path for a segment
    */
   const createSegmentPath = (startAngle, endAngle, innerRadius, outerRadius) => {
-    const startAngleRad = (startAngle - 90) * Math.PI / 180;
-    const endAngleRad = (endAngle - 90) * Math.PI / 180;
+    const startAngleRad = ((startAngle - 90) * Math.PI) / 180;
+    const endAngleRad = ((endAngle - 90) * Math.PI) / 180;
 
     const x1 = 50 + outerRadius * Math.cos(startAngleRad);
     const y1 = 50 + outerRadius * Math.sin(startAngleRad);
@@ -93,7 +93,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
    * Calculate position for text or image
    */
   const calculatePosition = (angle, radius) => {
-    const angleRad = (angle - 90) * Math.PI / 180;
+    const angleRad = ((angle - 90) * Math.PI) / 180;
     return {
       x: 50 + radius * Math.cos(angleRad),
       y: 50 + radius * Math.sin(angleRad),
@@ -114,12 +114,11 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
 
   // Render the wheel
   return (
-    <div className="philosofeet-circular-wheel" style={{ width: wheelSizeValue, height: wheelSizeValue }}>
-      <svg
-        viewBox="0 0 100 100"
-        className="wheel-svg"
-        style={{ width: '100%', height: '100%' }}
-      >
+    <div
+      className="philosofeet-circular-wheel"
+      style={{ width: wheelSizeValue, height: wheelSizeValue }}
+    >
+      <svg viewBox="0 0 100 100" className="wheel-svg" style={{ width: '100%', height: '100%' }}>
         {/* Define filters for better visuals */}
         <defs>
           <filter id={`shadow-${widgetId}`} x="-50%" y="-50%" width="200%" height="200%">
@@ -138,7 +137,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
         {/* Render outer ring segments (groups) */}
         {groups.map((group, index) => {
           const startAngle = index * anglePerGroup;
-          const endAngle = (index + 1) * anglePerGroup - (gapSizeValue / 5);
+          const endAngle = (index + 1) * anglePerGroup - gapSizeValue / 5;
           const outerRadius = 50;
           const innerRadius = 50 - ringWidthPercent;
 
@@ -208,7 +207,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
 
           return times.map((time, timeIndex) => {
             const startAngle = groupStartAngle + timeIndex * anglePerTime;
-            const endAngle = groupStartAngle + (timeIndex + 1) * anglePerTime - (gapSizeValue / 5);
+            const endAngle = groupStartAngle + (timeIndex + 1) * anglePerTime - gapSizeValue / 5;
 
             const midAngle = (startAngle + endAngle) / 2;
             const textRadius = outerRadius - innerRingWidthPercent / 2;

@@ -1,15 +1,12 @@
-import { rmSync, existsSync, readdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { existsSync, readdirSync, rmSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const rootDir = join(__dirname, '..');
 
-const pathsToClean = [
-  'assets/js/dist',
-  'release',
-];
+const pathsToClean = ['assets/js/dist', 'release'];
 
 console.log('🧹 Cleaning build artifacts...\n');
 
