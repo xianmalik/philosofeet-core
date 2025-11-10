@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import Autoplay from 'embla-carousel-autoplay';
+import useEmblaCarousel from 'embla-carousel-react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 /**
  * RSS Feed Carousel Widget Component
@@ -9,15 +11,12 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
   const [feedItems, setFeedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const carouselRef = useRef(null);
-  const autoplayRef = useRef(null);
 
   // Extract settings
   const {
     feedSource,
     feedLimit = 10,
-    itemsPerRow = { desktop: 3, tablet: 2, mobile: 1 },
+    itemsPerRow = { desktop: 4, tablet: 2, mobile: 1 },
     autoplay = true,
     autoplaySpeed = 3000,
     infiniteLoop = true,
@@ -51,6 +50,23 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
     dotActiveColor = '#000000',
     dotSpacing = { size: 20, unit: 'px' },
   } = settings;
+
+  // Setup Embla Carousel
+  const autoplayPlugin = autoplay
+    ? Autoplay({ delay: autoplaySpeed, stopOnInteraction: false })
+    : null;
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: infiniteLoop,
+      align: 'start',
+      skipSnaps: false,
+    },
+    autoplayPlugin ? [autoplayPlugin] : []
+  );
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState([]);
 
   // Fetch RSS feed
   useEffect(() => {
@@ -88,26 +104,11 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
     fetchFeed();
   }, [feedSource, feedLimit]);
 
-  // Autoplay functionality
-  useEffect(() => {
-    if (autoplay && feedItems.length > 0) {
-      autoplayRef.current = setInterval(() => {
-        handleNext();
-      }, autoplaySpeed);
-
-      return () => {
-        if (autoplayRef.current) {
-          clearInterval(autoplayRef.current);
-        }
-      };
-    }
-  }, [autoplay, autoplaySpeed, currentIndex, feedItems.length]);
-
   // Get current items per row based on viewport
   const getCurrentItemsPerRow = () => {
     if (window.innerWidth < 768) return itemsPerRow.mobile || 1;
     if (window.innerWidth < 1024) return itemsPerRow.tablet || 2;
-    return itemsPerRow.desktop || 3;
+    return itemsPerRow.desktop || 4;
   };
 
   const [currentItemsPerRow, setCurrentItemsPerRow] = useState(getCurrentItemsPerRow());
@@ -121,29 +122,40 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, [itemsPerRow]);
 
-  // Calculate total pages
-  const totalPages = Math.ceil(feedItems.length / currentItemsPerRow);
+  // Setup Embla event listeners
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
 
-  // Navigation handlers
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    } else if (infiniteLoop) {
-      setCurrentIndex(totalPages - 1);
-    }
-  };
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    setScrollSnaps(emblaApi.scrollSnapList());
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
 
-  const handleNext = () => {
-    if (currentIndex < totalPages - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else if (infiniteLoop) {
-      setCurrentIndex(0);
-    }
-  };
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi, onSelect]);
 
-  const handleDotClick = (index) => {
-    setCurrentIndex(index);
-  };
+  // Navigation functions
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const scrollTo = useCallback(
+    (index) => {
+      if (emblaApi) emblaApi.scrollTo(index);
+    },
+    [emblaApi]
+  );
 
   // Truncate text helper
   const truncateText = (text, length) => {
@@ -193,33 +205,27 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
   };
 
   // Styles
-  const carouselContainerStyle = {
-    position: 'relative',
+  const emblaStyle = {
     overflow: 'hidden',
     width: '100%',
   };
 
-  const carouselTrackStyle = {
-    display: 'flex',
-    transition: 'transform 0.5s ease-in-out',
-    transform: `translateX(-${currentIndex * 100}%)`,
-  };
-
-  const carouselSlideStyle = {
-    minWidth: '100%',
+  const emblaContainerStyle = {
     display: 'flex',
     gap: dimensionToCss(carouselGap),
-    padding: '0 2px',
+  };
+
+  const emblaSlideStyle = {
+    flex: `0 0 calc((100% - ${dimensionToCss(carouselGap)} * ${currentItemsPerRow - 1}) / ${currentItemsPerRow})`,
+    minWidth: 0,
   };
 
   const cardStyle = {
-    flex: `0 0 calc((100% - ${dimensionToCss(carouselGap)} * ${currentItemsPerRow - 1}) / ${currentItemsPerRow})`,
-    // backgroundColor: cardBackground,
-    // padding: boxToCss(cardPadding),
     borderRadius: boxToCss(cardBorderRadius),
     boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
+    height: '100%',
   };
 
   const thumbnailContainerStyle = {
@@ -277,13 +283,18 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
     fontSize: `calc(${dimensionToCss(arrowSize)} / 2)`,
     zIndex: 10,
     transition: 'all 0.3s ease',
+    padding: 0,
+    lineHeight: 1,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
   };
 
   const dotsContainerStyle = {
     display: 'flex',
     justifyContent: 'center',
-    gap: `calc(${dimensionToCss(dotSpacing)} / 2)`,
+    alignItems: 'center',
+    gap: `calc(${dimensionToCss(dotSpacing)} / 3)`,
     marginTop: dimensionToCss(dotSpacing),
+    padding: '10px 0',
   };
 
   const dotStyle = (isActive) => ({
@@ -294,6 +305,8 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
     border: 'none',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
+    padding: 0,
+    flexShrink: 0,
   });
 
   // Render loading state
@@ -342,69 +355,79 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
 
   return (
     <div className="ph-rss-feed-carousel-wrapper" style={{ position: 'relative' }}>
-      <div ref={carouselRef} style={carouselContainerStyle}>
-        <div style={carouselTrackStyle}>
+      <div className="ph-embla" ref={emblaRef} style={emblaStyle}>
+        <div className="ph-embla__container" style={emblaContainerStyle}>
           {pages.map((pageItems, pageIndex) => (
-            <div key={`page-${pageIndex}`} style={carouselSlideStyle}>
-              {pageItems.map((item) => (
-                <div
-                  key={item.link || item.guid || item.title}
-                  className="ph-rss-feed-card"
-                  style={cardStyle}
-                >
-                  {showThumbnail && (
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ display: 'block', textDecoration: 'none' }}
-                    >
-                      <div className="ph-rss-feed-thumbnail" style={thumbnailContainerStyle}>
-                        <img
-                          src={extractImage(item)}
-                          alt={item.title || 'Feed item'}
-                          style={thumbnailStyle}
-                          onError={(e) => {
-                            e.target.src = placeholderImage;
-                          }}
-                        />
-                      </div>
-                    </a>
-                  )}
-                  {showTitle && (
-                    <h3 className="ph-rss-feed-title" style={titleStyle}>
+            <div key={`page-${pageIndex}`} className="ph-embla__slide" style={emblaSlideStyle}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: `repeat(${currentItemsPerRow}, 1fr)`,
+                  gap: dimensionToCss(carouselGap),
+                  width: '100%',
+                }}
+              >
+                {pageItems.map((item) => (
+                  <div
+                    key={item.link || item.guid || item.title}
+                    className="ph-rss-feed-card"
+                    style={cardStyle}
+                  >
+                    {showThumbnail && (
                       <a
                         href={item.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ color: 'inherit', textDecoration: 'none' }}
+                        style={{ display: 'block', textDecoration: 'none' }}
                       >
-                        {item.title}
+                        <div className="ph-rss-feed-thumbnail" style={thumbnailContainerStyle}>
+                          <img
+                            src={extractImage(item)}
+                            alt={item.title || 'Feed item'}
+                            style={thumbnailStyle}
+                            onError={(e) => {
+                              e.target.src = placeholderImage;
+                            }}
+                          />
+                        </div>
                       </a>
-                    </h3>
-                  )}
-                  {showDate && item.pubDate && (
-                    <div className="ph-rss-feed-date" style={dateStyle}>
-                      {formatDate(item.pubDate)}
-                    </div>
-                  )}
-                  {showExcerpt && (
-                    <div className="ph-rss-feed-excerpt" style={excerptStyle}>
-                      {truncateText(item.description || item.content, excerptLength)}
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                    {showTitle && (
+                      <h3 className="ph-rss-feed-title" style={titleStyle}>
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: 'inherit', textDecoration: 'none' }}
+                        >
+                          {item.title}
+                        </a>
+                      </h3>
+                    )}
+                    {showDate && item.pubDate && (
+                      <div className="ph-rss-feed-date" style={dateStyle}>
+                        {formatDate(item.pubDate)}
+                      </div>
+                    )}
+                    {showExcerpt && (
+                      <div className="ph-rss-feed-excerpt" style={excerptStyle}>
+                        {truncateText(item.description || item.content, excerptLength)}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {showArrows && totalPages > 1 && (
+      {showArrows && pages.length > 1 && (
         <>
           <button
             type="button"
-            onClick={handlePrev}
+            className="ph-embla__prev"
+            onClick={scrollPrev}
             style={{ ...arrowStyle, left: '10px' }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = arrowHoverBackground;
@@ -420,7 +443,8 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
           </button>
           <button
             type="button"
-            onClick={handleNext}
+            className="ph-embla__next"
+            onClick={scrollNext}
             style={{ ...arrowStyle, right: '10px' }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = arrowHoverBackground;
@@ -437,14 +461,15 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
         </>
       )}
 
-      {showDots && totalPages > 1 && (
-        <div style={dotsContainerStyle}>
-          {pages.map((_, index) => (
+      {showDots && pages.length > 1 && (
+        <div className="ph-embla__dots" style={dotsContainerStyle}>
+          {scrollSnaps.map((_, index) => (
             <button
               key={`dot-${index}`}
               type="button"
-              onClick={() => handleDotClick(index)}
-              style={dotStyle(index === currentIndex)}
+              className={`ph-embla__dot ${index === selectedIndex ? 'ph-embla__dot--selected' : ''}`}
+              onClick={() => scrollTo(index)}
+              style={dotStyle(index === selectedIndex)}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}

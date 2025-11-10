@@ -98,7 +98,7 @@ class RSS_Feed_Carousel_Widget extends Base_Widget {
             [
                 'label' => __('Items Per Row', 'philosofeet-core'),
                 'type' => Controls_Manager::NUMBER,
-                'default' => 3,
+                'default' => 4,
                 'tablet_default' => 2,
                 'mobile_default' => 1,
                 'min' => 1,
