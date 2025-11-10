@@ -5,14 +5,12 @@
  * The key should match the widget name returned by get_name() in PHP
  */
 
-// Example widget imports (uncomment and add as you create widgets):
-// import ExampleWidget from './ExampleWidget';
 import CircularWheelWidget from './CircularWheelWidget';
+import RSSFeedCarousel from './RSSFeedCarousel';
 
 const widgetComponents = {
-  // Register your widgets here
-  // 'example-widget': ExampleWidget,
   'circular-wheel': CircularWheelWidget,
+  'rss-feed-carousel': RSSFeedCarousel,
 };
 
 export default widgetComponents;

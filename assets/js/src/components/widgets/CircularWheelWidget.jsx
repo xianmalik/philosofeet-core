@@ -32,11 +32,11 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   const centerCircleSizePercent = centerCircleSize.size;
 
   // Layer radii (from center outward) - ALL EQUAL WIDTH
-  const centerRadius = (centerCircleSizePercent / 2) / 2; // Reduced to half (~7.5%)
+  const centerRadius = centerCircleSizePercent / 2 / 2; // Reduced to half (~7.5%)
   const gap = 0.5; // Small gap between layers
 
   // Calculate equal layer width for 4 layers (types, times, images, titles)
-  const availableRadius = 50 - centerRadius - (gap * 5); // 5 gaps total
+  const availableRadius = 50 - centerRadius - gap * 5; // 5 gaps total
   const layerWidth = availableRadius / 4; // Equal width for all 4 layers
 
   // Layer 1: Inner ring (types)

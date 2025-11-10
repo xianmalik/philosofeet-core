@@ -30,17 +30,18 @@ class Widget_Manager {
     private function include_widget_files() {
         $base_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/base-widget.php';
         $circular_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/circular-wheel-widget.php';
+        $rss_feed_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/rss-feed-carousel-widget.php';
 
         if (file_exists($base_widget)) {
             require_once $base_widget;
         }
 
-        // Include additional widget files here as you create them
-        // Example:
-        // require_once PHILOSOFEET_CORE_PATH . 'includes/widgets/example-widget.php';
-
         if (file_exists($circular_widget)) {
             require_once $circular_widget;
+        }
+
+        if (file_exists($rss_feed_widget)) {
+            require_once $rss_feed_widget;
         }
     }
 
@@ -48,12 +49,13 @@ class Widget_Manager {
      * Register widget instances
      */
     private function register_widget_instances($widgets_manager) {
-        // Register your widgets here as you create them
-        // Example:
-        // $widgets_manager->register(new Widgets\Example_Widget());
-
         if (class_exists('Philosofeet\Widgets\Circular_Wheel_Widget')) {
             $widget = new Widgets\Circular_Wheel_Widget();
+            $widgets_manager->register($widget);
+        }
+
+        if (class_exists('Philosofeet\Widgets\RSS_Feed_Carousel_Widget')) {
+            $widget = new Widgets\RSS_Feed_Carousel_Widget();
             $widgets_manager->register($widget);
         }
     }

@@ -17,9 +17,16 @@ const WidgetRenderer = ({ widgetType, widgetId, settings }) => {
   if (!WidgetComponent) {
     console.error(`[Philosofeet] Widget type "${widgetType}" not found in registry`);
     return (
-      <div className="philosofeet-widget-error" style={{ padding: '20px', border: '2px solid red', margin: '10px' }}>
-        <p><strong>Error:</strong> Widget type "{widgetType}" not found</p>
-        <p><small>Available: {Object.keys(widgetComponents).join(', ')}</small></p>
+      <div
+        className="philosofeet-widget-error"
+        style={{ padding: '20px', border: '2px solid red', margin: '10px' }}
+      >
+        <p>
+          <strong>Error:</strong> Widget type "{widgetType}" not found
+        </p>
+        <p>
+          <small>Available: {Object.keys(widgetComponents).join(', ')}</small>
+        </p>
       </div>
     );
   }

@@ -47,7 +47,7 @@ function createZip() {
 
     output.on('close', () => {
       const sizeInMB = (archive.pointer() / 1024 / 1024).toFixed(2);
-      console.log(`\n✅ Package created successfully!`);
+      console.log('\n✅ Package created successfully!');
       console.log(`📦 File: ${zipName}`);
       console.log(`📊 Size: ${sizeInMB} MB`);
       console.log(`📂 Total files: ${archive.pointer()} bytes\n`);

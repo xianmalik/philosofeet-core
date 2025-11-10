@@ -13,6 +13,12 @@
       "complexity": {
         "noForEach": "off"
       },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off"
+      },
       "style": {
         "useImportType": "off",
         "noNonNullAssertion": "off"
