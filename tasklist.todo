@@ -1,1 +1,13 @@
 - reduce the center ring to half of what it is right now. keep the center image same size. but reduce the circle. and adjust rest of the things to this. it's almost like, it's five steps. center image, type, times, image, title. all are same width from the center into the radius.
+
+
+main.js?ver=1.0.0:46 Uncaught TypeError: Cannot read properties of undefined (reading 'addAction')
+    at main.js?ver=1.0.0:46:33900
+
+Gl());
+window.elementorFrontend && (console.log("[Philosofeet] Elementor frontend detected, adding hooks"),
+window.elementorFrontend.hooks.addAction("frontend/element_ready/widget", () => {
+    console.log("[Philosofeet] Elementor widget ready, re-initializing"),
+    Gl()
+}
+));

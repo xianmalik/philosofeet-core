@@ -59,19 +59,24 @@ abstract class Base_Widget extends Widget_Base {
 
     /**
      * Render widget output in the editor
+     *
+     * This method is called by Elementor to render the widget in the editor preview.
+     * We output the same markup as the frontend, allowing React to initialize properly.
      */
     protected function content_template() {
+        // Render the same markup as frontend
+        // Elementor will populate data-widget-settings via JavaScript
         ?>
-        <#
-        var widgetData = settings;
-        #>
         <div
             class="philosofeet-widget"
             data-widget-type="<?php echo esc_attr($this->get_name()); ?>"
-            data-widget-settings="{{ JSON.stringify(widgetData) }}"
+            data-widget-id="{{ view.getIDInt() }}"
+            data-widget-settings="{{ JSON.stringify(settings) }}"
+            data-initialized="false"
         >
-            <div class="philosofeet-widget-placeholder">
-                <p><?php echo esc_html($this->get_title()); ?> - Preview will render on frontend</p>
+            <div class="philosofeet-loading" style="padding: 20px; background: #f0f0f0; border: 2px solid #ccc; text-align: center;">
+                <p><strong>Loading <?php echo esc_html($this->get_title()); ?>...</strong></p>
+                <p><small>If this message persists, check the browser console for errors.</small></p>
             </div>
         </div>
         <?php

@@ -100,6 +100,10 @@ final class PhilosofeetCORE {
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_scripts']);
         add_action('elementor/frontend/after_enqueue_styles', [$this, 'enqueue_frontend_styles']);
 
+        // Register editor scripts (for Elementor editor preview)
+        add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_editor_scripts']);
+        add_action('elementor/preview/enqueue_scripts', [$this, 'enqueue_preview_scripts']);
+
         // Load debug file if debug mode is enabled
         if (defined('PHILOSOFEET_DEBUG') && PHILOSOFEET_DEBUG) {
             $debug_file = PHILOSOFEET_CORE_PATH . 'debug-widgets.php';
@@ -221,6 +225,23 @@ final class PhilosofeetCORE {
             [],
             PHILOSOFEET_CORE_VERSION
         );
+    }
+
+    /**
+     * Enqueue scripts for Elementor editor
+     */
+    public function enqueue_editor_scripts() {
+        // Enqueue the same scripts as frontend for editor preview
+        $this->enqueue_frontend_scripts();
+    }
+
+    /**
+     * Enqueue scripts for Elementor preview mode
+     */
+    public function enqueue_preview_scripts() {
+        // Enqueue the same scripts as frontend for preview
+        $this->enqueue_frontend_scripts();
+        $this->enqueue_frontend_styles();
     }
 
     /**

@@ -744,6 +744,70 @@ class RSS_Feed_Carousel_Widget extends Base_Widget {
     }
 
     /**
+     * Render widget output in the editor
+     */
+    protected function content_template() {
+        ?>
+        <#
+        // Transform Elementor settings to React component format
+        var widgetData = {
+            feedSource: settings.feed_source?.url || '',
+            feedLimit: settings.feed_limit || 10,
+            itemsPerRow: {
+                desktop: settings.items_per_row || 4,
+                tablet: settings.items_per_row_tablet || 2,
+                mobile: settings.items_per_row_mobile || 1,
+            },
+            autoplay: settings.autoplay === 'yes',
+            autoplaySpeed: settings.autoplay_speed || 3000,
+            infiniteLoop: settings.infinite_loop === 'yes',
+            showArrows: settings.show_arrows === 'yes',
+            showDots: settings.show_dots === 'yes',
+            showThumbnail: settings.show_thumbnail === 'yes',
+            placeholderImage: settings.placeholder_image?.url || '',
+            showTitle: settings.show_title === 'yes',
+            showDate: settings.show_date === 'yes',
+            showExcerpt: settings.show_excerpt === 'yes',
+            excerptLength: settings.excerpt_length || 150,
+            carouselGap: settings.carousel_gap || { size: 20, unit: 'px' },
+            cardBackground: settings.card_background || 'transparent',
+            cardPadding: settings.card_padding || { top: 15, right: 15, bottom: 15, left: 15, unit: 'px' },
+            cardBorderRadius: settings.card_border_radius || { top: 8, right: 8, bottom: 8, left: 8, unit: 'px' },
+            thumbnailHeight: settings.thumbnail_height || { size: 100, unit: '%' },
+            thumbnailBorderRadius: settings.thumbnail_border_radius || { top: 4, right: 4, bottom: 4, left: 4, unit: 'px' },
+            thumbnailObjectFit: settings.thumbnail_object_fit || 'cover',
+            titleColor: settings.title_color || '#ffffff',
+            titleSpacing: settings.title_spacing || { size: 10, unit: 'px' },
+            dateColor: settings.date_color || '#ffffff',
+            dateSpacing: settings.date_spacing || { size: 8, unit: 'px' },
+            excerptColor: settings.excerpt_color || '#ffffff',
+            arrowSize: settings.arrow_size || { size: 40, unit: 'px' },
+            arrowColor: settings.arrow_color || '#000000',
+            arrowBackground: settings.arrow_background || '#ffffff',
+            arrowHoverColor: settings.arrow_hover_color || '#ffffff',
+            arrowHoverBackground: settings.arrow_hover_background || '#000000',
+            dotSize: settings.dot_size || { size: 10, unit: 'px' },
+            dotColor: settings.dot_color || '#cccccc',
+            dotActiveColor: settings.dot_active_color || '#000000',
+            dotSpacing: settings.dot_spacing || { size: 20, unit: 'px' },
+        };
+        #>
+        <div
+            class="philosofeet-widget"
+            data-widget-type="rss-feed-carousel"
+            data-widget-id="{{ view.getIDInt() }}"
+            data-widget-settings="{{ JSON.stringify(widgetData) }}"
+            data-initialized="false"
+        >
+            <div class="philosofeet-loading" style="padding: 20px; background: #f0f0f0; border: 2px solid #ccc; text-align: center;">
+                <p><strong>Loading RSS Feed Carousel...</strong></p>
+                <p><small>If this message persists, check the browser console for errors.</small></p>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
      * Prepare widget data for React
      */
     protected function prepare_widget_data($settings) {
