@@ -12,7 +12,7 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Extract settings
+  // Extract settings with explicit checks for boolean values
   const {
     feedSource,
     feedLimit = 10,
@@ -20,13 +20,13 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
     autoplay = true,
     autoplaySpeed = 3000,
     infiniteLoop = true,
-    showArrows = true,
-    showDots = true,
-    showThumbnail = true,
+    showArrows,
+    showDots,
+    showThumbnail,
     placeholderImage = '',
-    showTitle = true,
-    showDate = true,
-    showExcerpt = true,
+    showTitle,
+    showDate,
+    showExcerpt,
     excerptLength = 150,
     carouselGap = { size: 20, unit: 'px' },
     cardBackground = 'transparent',
@@ -47,9 +47,17 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
     arrowHoverBackground = '#000000',
     dotSize = { size: 10, unit: 'px' },
     dotColor = '#cccccc',
-    dotActiveColor = '#000000',
+    dotActiveColor = '#ffffff',
     dotSpacing = { size: 20, unit: 'px' },
   } = settings;
+
+  // Ensure boolean values are properly handled (false is a valid value, not undefined)
+  const showArrowsValue = showArrows !== undefined ? showArrows : true;
+  const showDotsValue = showDots !== undefined ? showDots : true;
+  const showThumbnailValue = showThumbnail !== undefined ? showThumbnail : true;
+  const showTitleValue = showTitle !== undefined ? showTitle : true;
+  const showDateValue = showDate !== undefined ? showDate : true;
+  const showExcerptValue = showExcerpt !== undefined ? showExcerpt : true;
 
   // Setup Embla Carousel
   const autoplayPlugin = autoplay
@@ -190,18 +198,18 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
 
   // Helper to convert dimension object to CSS value
   const dimensionToCss = (dimension) => {
-    if (typeof dimension === 'object' && dimension.size !== undefined) {
+    if (dimension && typeof dimension === 'object' && dimension.size !== undefined) {
       return `${dimension.size}${dimension.unit || 'px'}`;
     }
-    return dimension;
+    return dimension || '0px';
   };
 
   // Helper to convert padding/margin object to CSS
   const boxToCss = (box) => {
-    if (typeof box === 'object' && box.top !== undefined) {
+    if (box && typeof box === 'object' && box.top !== undefined) {
       return `${box.top}${box.unit} ${box.right}${box.unit} ${box.bottom}${box.unit} ${box.left}${box.unit}`;
     }
-    return box;
+    return box || '0px';
   };
 
   // Styles
@@ -347,82 +355,65 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
     );
   }
 
-  // Group items by page
-  const pages = [];
-  for (let i = 0; i < feedItems.length; i += currentItemsPerRow) {
-    pages.push(feedItems.slice(i, i + currentItemsPerRow));
-  }
-
   return (
     <div className="ph-rss-feed-carousel-wrapper" style={{ position: 'relative' }}>
       <div className="ph-embla" ref={emblaRef} style={emblaStyle}>
         <div className="ph-embla__container" style={emblaContainerStyle}>
-          {pages.map((pageItems, pageIndex) => (
-            <div key={`page-${pageIndex}`} className="ph-embla__slide" style={emblaSlideStyle}>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: `repeat(${currentItemsPerRow}, 1fr)`,
-                  gap: dimensionToCss(carouselGap),
-                  width: '100%',
-                }}
-              >
-                {pageItems.map((item) => (
-                  <div
-                    key={item.link || item.guid || item.title}
-                    className="ph-rss-feed-card"
-                    style={cardStyle}
+          {feedItems.map((item) => (
+            <div
+              key={item.link || item.guid || item.title}
+              className="ph-embla__slide"
+              style={emblaSlideStyle}
+            >
+              <div className="ph-rss-feed-card" style={cardStyle}>
+                {showThumbnailValue && (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: 'block', textDecoration: 'none' }}
                   >
-                    {showThumbnail && (
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ display: 'block', textDecoration: 'none' }}
-                      >
-                        <div className="ph-rss-feed-thumbnail" style={thumbnailContainerStyle}>
-                          <img
-                            src={extractImage(item)}
-                            alt={item.title || 'Feed item'}
-                            style={thumbnailStyle}
-                            onError={(e) => {
-                              e.target.src = placeholderImage;
-                            }}
-                          />
-                        </div>
-                      </a>
-                    )}
-                    {showTitle && (
-                      <h3 className="ph-rss-feed-title" style={titleStyle}>
-                        <a
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: 'inherit', textDecoration: 'none' }}
-                        >
-                          {item.title}
-                        </a>
-                      </h3>
-                    )}
-                    {showDate && item.pubDate && (
-                      <div className="ph-rss-feed-date" style={dateStyle}>
-                        {formatDate(item.pubDate)}
-                      </div>
-                    )}
-                    {showExcerpt && (
-                      <div className="ph-rss-feed-excerpt" style={excerptStyle}>
-                        {truncateText(item.description || item.content, excerptLength)}
-                      </div>
-                    )}
+                    <div className="ph-rss-feed-thumbnail" style={thumbnailContainerStyle}>
+                      <img
+                        src={extractImage(item)}
+                        alt={item.title || 'Feed item'}
+                        style={thumbnailStyle}
+                        onError={(e) => {
+                          e.target.src = placeholderImage;
+                        }}
+                      />
+                    </div>
+                  </a>
+                )}
+                {showTitleValue && (
+                  <h3 className="ph-rss-feed-title" style={titleStyle}>
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                    >
+                      {item.title}
+                    </a>
+                  </h3>
+                )}
+                {showDateValue && item.pubDate && (
+                  <div className="ph-rss-feed-date" style={dateStyle}>
+                    {formatDate(item.pubDate)}
                   </div>
-                ))}
+                )}
+                {showExcerptValue && (
+                  <div className="ph-rss-feed-excerpt" style={excerptStyle}>
+                    {truncateText(item.description || item.content, excerptLength)}
+                  </div>
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {showArrows && pages.length > 1 && (
+      {showArrowsValue && feedItems.length > currentItemsPerRow && (
         <>
           <button
             type="button"
@@ -461,7 +452,7 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
         </>
       )}
 
-      {showDots && pages.length > 1 && (
+      {showDotsValue && feedItems.length > currentItemsPerRow && (
         <div className="ph-embla__dots" style={dotsContainerStyle}>
           {scrollSnaps.map((_, index) => (
             <button

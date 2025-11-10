@@ -52,13 +52,34 @@ if (document.readyState === 'loading') {
 }
 
 // Re-initialize on Elementor preview changes (for editor preview)
-if (window.elementorFrontend) {
-  console.log('[Philosofeet] Elementor frontend detected, adding hooks');
-  window.elementorFrontend.hooks.addAction('frontend/element_ready/widget', () => {
-    console.log('[Philosofeet] Elementor widget ready, re-initializing');
-    initializeWidgets();
-  });
+function setupElementorHooks() {
+  if (window.elementorFrontend?.hooks) {
+    console.log('[Philosofeet] Elementor frontend detected, adding hooks');
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/widget', () => {
+      console.log('[Philosofeet] Elementor widget ready, re-initializing');
+      initializeWidgets();
+    });
+  } else {
+    console.log('[Philosofeet] Elementor hooks not ready yet');
+  }
 }
+
+// Try to setup hooks immediately
+setupElementorHooks();
+
+// Also listen for Elementor init event
+window.addEventListener('elementor/frontend/init', () => {
+  console.log('[Philosofeet] Elementor frontend initialized');
+  setupElementorHooks();
+  initializeWidgets();
+});
+
+// Listen for Elementor preview loaded event (for editor preview)
+jQuery(window).on('elementor/frontend/init', () => {
+  console.log('[Philosofeet] Elementor preview loaded');
+  setupElementorHooks();
+  initializeWidgets();
+});
 
 // Export for manual initialization if needed
 window.philosofeetCore = window.philosofeetCore || {};
