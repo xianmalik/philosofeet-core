@@ -86,7 +86,10 @@ function updateJsonFile(filePath, pattern, replacement, newVersion) {
     console.log(`${colors.green}✓${colors.reset} Updated ${path.basename(filePath)}`);
     return true;
   } catch (error) {
-    console.error(`${colors.red}✗${colors.reset} Error updating ${path.basename(filePath)}:`, error.message);
+    console.error(
+      `${colors.red}✗${colors.reset} Error updating ${path.basename(filePath)}:`,
+      error.message
+    );
     return false;
   }
 }
@@ -104,10 +107,14 @@ function updateTextFile(filePath, patterns, newVersion) {
 
       if (pattern.test(content)) {
         content = content.replace(pattern, replacement(newVersion));
-        console.log(`${colors.green}✓${colors.reset} Updated ${name} in ${path.basename(filePath)}`);
+        console.log(
+          `${colors.green}✓${colors.reset} Updated ${name} in ${path.basename(filePath)}`
+        );
         updated = true;
       } else {
-        console.warn(`${colors.yellow}⚠${colors.reset} Pattern not found: ${name} in ${path.basename(filePath)}`);
+        console.warn(
+          `${colors.yellow}⚠${colors.reset} Pattern not found: ${name} in ${path.basename(filePath)}`
+        );
       }
     });
 
@@ -117,7 +124,10 @@ function updateTextFile(filePath, patterns, newVersion) {
 
     return updated;
   } catch (error) {
-    console.error(`${colors.red}✗${colors.reset} Error updating ${path.basename(filePath)}:`, error.message);
+    console.error(
+      `${colors.red}✗${colors.reset} Error updating ${path.basename(filePath)}:`,
+      error.message
+    );
     return false;
   }
 }
@@ -149,7 +159,9 @@ function updateVersion(newVersion) {
 
   // Confirm update
   if (currentVersion === newVersion) {
-    console.warn(`${colors.yellow}Warning:${colors.reset} New version is the same as current version`);
+    console.warn(
+      `${colors.yellow}Warning:${colors.reset} New version is the same as current version`
+    );
     console.log(`Proceeding anyway...\n`);
   }
 
@@ -183,7 +195,9 @@ function updateVersion(newVersion) {
     console.log(`\n${colors.cyan}Next steps:${colors.reset}`);
     console.log(`  1. Run: ${colors.yellow}npm run build${colors.reset} to rebuild assets`);
     console.log(`  2. Review changes: ${colors.yellow}git diff${colors.reset}`);
-    console.log(`  3. Commit changes: ${colors.yellow}git commit -am "Bump version to ${newVersion}"${colors.reset}`);
+    console.log(
+      `  3. Commit changes: ${colors.yellow}git commit -am "Bump version to ${newVersion}"${colors.reset}`
+    );
     console.log(`  4. Tag release: ${colors.yellow}git tag v${newVersion}${colors.reset}\n`);
     process.exit(0);
   } else {

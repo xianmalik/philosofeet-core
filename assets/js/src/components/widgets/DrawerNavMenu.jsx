@@ -70,11 +70,7 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
     if (!selectedIcon || !selectedIcon.value) {
       // Default hamburger icon if no icon selected
       return (
-        <svg
-          className="ph-hamburger-icon"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg className="ph-hamburger-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
         </svg>
       );
@@ -82,27 +78,19 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
 
     // Handle SVG uploads
     if (selectedIcon.library === 'svg' && selectedIcon.value?.url) {
-      return (
-        <img
-          className="ph-hamburger-icon"
-          src={selectedIcon.value.url}
-          alt="Menu icon"
-        />
-      );
+      return <img className="ph-hamburger-icon" src={selectedIcon.value.url} alt="Menu icon" />;
     }
 
     // Handle font icons (Font Awesome, etc.)
     if (selectedIcon.value) {
-      return <i className={`ph-hamburger-icon ${selectedIcon.value}`} aria-hidden="true" />;
+      return (
+        <i className={`ph-hamburger-icon ${selectedIcon.value}`} aria-hidden="true" tabIndex={-1} />
+      );
     }
 
     // Fallback to default icon
     return (
-      <svg
-        className="ph-hamburger-icon"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg className="ph-hamburger-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
       </svg>
     );
@@ -135,6 +123,11 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
         <div
           className="ph-drawer-overlay"
           onClick={closeDrawer}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              closeDrawer();
+            }
+          }}
           style={{
             position: 'fixed',
             top: 0,
@@ -154,7 +147,7 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
         style={{
           position: 'fixed',
           top: 0,
-          right: isOpen ? 0 : (isMobile ? '-100%' : '-100%'),
+          right: isOpen ? 0 : isMobile ? '-100%' : '-100%',
           bottom: 0,
           left: isMobile ? 0 : 'auto',
           zIndex: 999999,

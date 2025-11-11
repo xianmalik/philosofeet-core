@@ -44,6 +44,6 @@
     }
   },
   "files": {
-    "ignore": ["node_modules", "assets/js/dist", "*.min.js", "*.log", ".claude"]
+    "ignore": ["node_modules", "assets/js/dist", "*.min.js", "*.log", ".claude", "scripts/*.js"]
   }
 }

@@ -47,7 +47,7 @@ const RSSFeedCarousel = ({ widgetId, settings }) => {
     arrowHoverBackground = '#000000',
     dotSize = { size: 10, unit: 'px' },
     dotColor = '#cccccc',
-    dotActiveColor = '#ffffff', 
+    dotActiveColor = '#ffffff',
     dotSpacing = { size: 20, unit: 'px' },
   } = settings;
 
