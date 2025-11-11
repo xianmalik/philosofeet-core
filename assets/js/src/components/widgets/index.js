@@ -6,12 +6,12 @@
  */
 
 import CircularWheelWidget from './CircularWheelWidget';
-import HamburgerMenu from './HamburgerMenu';
+import DrawerNavMenu from './DrawerNavMenu';
 import RSSFeedCarousel from './RSSFeedCarousel';
 
 const widgetComponents = {
   'circular-wheel': CircularWheelWidget,
-  'hamburger-menu': HamburgerMenu,
+  'drawer-nav-menu': DrawerNavMenu,
   'rss-feed-carousel': RSSFeedCarousel,
 };
 

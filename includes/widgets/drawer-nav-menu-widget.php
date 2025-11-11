@@ -1,6 +1,6 @@
 <?php
 /**
- * Hamburger Menu Widget
+ * Drawer Nav Menu Widget
  *
  * @package Philosofeet\Widgets
  */
@@ -16,22 +16,22 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Hamburger Menu Widget Class
+ * Drawer Nav Menu Widget Class
  */
-class Hamburger_Menu_Widget extends Base_Widget {
+class Drawer_Nav_Menu_Widget extends Base_Widget {
 
     /**
      * Get widget name
      */
     public function get_name() {
-        return 'hamburger-menu';
+        return 'drawer-nav-menu';
     }
 
     /**
      * Get widget title
      */
     public function get_title() {
-        return __('Hamburger Menu', 'philosofeet-core');
+        return __('Drawer Nav Menu', 'philosofeet-core');
     }
 
     /**
@@ -66,14 +66,22 @@ class Hamburger_Menu_Widget extends Base_Widget {
         );
 
         $this->add_control(
-            'show_icon',
+            'selected_icon',
             [
-                'label' => __('Show Icon', 'philosofeet-core'),
-                'type' => Controls_Manager::SWITCHER,
-                'label_on' => __('Yes', 'philosofeet-core'),
-                'label_off' => __('No', 'philosofeet-core'),
-                'return_value' => 'yes',
-                'default' => 'yes',
+                'label' => __('Icon', 'philosofeet-core'),
+                'type' => Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'fas fa-bars',
+                    'library' => 'fa-solid',
+                ],
+                'recommended' => [
+                    'fa-solid' => [
+                        'bars',
+                        'navicon',
+                        'align-justify',
+                        'stream',
+                    ],
+                ],
             ]
         );
 
@@ -86,9 +94,6 @@ class Hamburger_Menu_Widget extends Base_Widget {
                 'options' => [
                     'left' => __('Left', 'philosofeet-core'),
                     'right' => __('Right', 'philosofeet-core'),
-                ],
-                'condition' => [
-                    'show_icon' => 'yes',
                 ],
             ]
         );
@@ -284,7 +289,10 @@ class Hamburger_Menu_Widget extends Base_Widget {
                     'size' => 24,
                 ],
                 'selectors' => [
-                    '{{WRAPPER}} .ph-hamburger-icon' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .ph-hamburger-icon' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}}; font-size: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .ph-hamburger-icon svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .ph-hamburger-icon img' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .ph-hamburger-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -296,7 +304,11 @@ class Hamburger_Menu_Widget extends Base_Widget {
                 'type' => Controls_Manager::COLOR,
                 'default' => '#000000',
                 'selectors' => [
-                    '{{WRAPPER}} .ph-hamburger-icon svg' => 'fill: {{VALUE}};',
+                    '{{WRAPPER}} .ph-hamburger-icon' => 'color: {{VALUE}} !important; fill: {{VALUE}} !important;',
+                    '{{WRAPPER}} .ph-hamburger-icon svg' => 'fill: {{VALUE}} !important;',
+                    '{{WRAPPER}} .ph-hamburger-icon svg path' => 'fill: {{VALUE}} !important;',
+                    '{{WRAPPER}} .ph-hamburger-icon i' => 'color: {{VALUE}} !important;',
+                    '{{WRAPPER}} .ph-hamburger-icon img' => 'filter: brightness(0) saturate(100%);',
                 ],
             ]
         );
@@ -609,7 +621,7 @@ class Hamburger_Menu_Widget extends Base_Widget {
         #>
         <div
             class="philosofeet-widget"
-            data-widget-type="hamburger-menu"
+            data-widget-type="drawer-nav-menu"
             data-widget-id="{{ view.getIDInt() }}"
             data-widget-settings="{{ JSON.stringify(widgetData) }}"
             data-initialized="false"

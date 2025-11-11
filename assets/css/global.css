@@ -197,7 +197,31 @@
 }
 
 .ph-hamburger-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ph-hamburger-icon,
+.ph-hamburger-icon svg,
+.ph-hamburger-icon svg *,
+.ph-hamburger-icon i {
+  fill: inherit !important;
+  color: inherit !important;
+}
+
+.ph-hamburger-icon svg {
   display: block;
+}
+
+.ph-hamburger-icon img {
+  display: block;
+  object-fit: contain;
+}
+
+.ph-hamburger-icon i {
+  display: block;
+  line-height: 1;
 }
 
 .ph-hamburger-text {
@@ -223,6 +247,14 @@
 .ph-drawer-footer {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding-top: 20px;
+}
+
+.ph-drawer-close-icon {
+  fill: currentColor;
+}
+
+.ph-drawer-close-icon path {
+  fill: currentColor;
 }
 
 /* Mobile: Fullscreen drawer */

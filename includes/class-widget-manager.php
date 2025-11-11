@@ -31,7 +31,7 @@ class Widget_Manager {
         $base_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/base-widget.php';
         $circular_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/circular-wheel-widget.php';
         $rss_feed_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/rss-feed-carousel-widget.php';
-        $hamburger_menu_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/hamburger-menu-widget.php';
+        $drawer_nav_menu_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/drawer-nav-menu-widget.php';
 
         if (file_exists($base_widget)) {
             require_once $base_widget;
@@ -45,8 +45,8 @@ class Widget_Manager {
             require_once $rss_feed_widget;
         }
 
-        if (file_exists($hamburger_menu_widget)) {
-            require_once $hamburger_menu_widget;
+        if (file_exists($drawer_nav_menu_widget)) {
+            require_once $drawer_nav_menu_widget;
         }
     }
 
@@ -64,8 +64,8 @@ class Widget_Manager {
             $widgets_manager->register($widget);
         }
 
-        if (class_exists('Philosofeet\Widgets\Hamburger_Menu_Widget')) {
-            $widget = new Widgets\Hamburger_Menu_Widget();
+        if (class_exists('Philosofeet\Widgets\Drawer_Nav_Menu_Widget')) {
+            $widget = new Widgets\Drawer_Nav_Menu_Widget();
             $widgets_manager->register($widget);
         }
     }
