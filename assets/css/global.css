@@ -168,3 +168,67 @@
     font-size: 1.5px;
   }
 }
+
+/* Hamburger Menu Widget Styles */
+@keyframes phFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ph-hamburger-button {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+}
+
+.ph-hamburger-button[data-icon-position="left"] {
+  flex-direction: row;
+}
+
+.ph-hamburger-button[data-icon-position="right"] {
+  flex-direction: row-reverse;
+}
+
+.ph-hamburger-icon {
+  display: block;
+}
+
+.ph-hamburger-text {
+  display: block;
+  font-weight: 500;
+}
+
+.ph-drawer {
+  display: flex;
+  flex-direction: column;
+}
+
+.ph-drawer-content {
+  flex: 1;
+  position: relative;
+}
+
+.ph-drawer-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.ph-drawer-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 20px;
+}
+
+/* Mobile: Fullscreen drawer */
+@media (max-width: 767px) {
+  .ph-drawer {
+    width: 100% !important;
+    left: 0 !important;
+  }
+}
