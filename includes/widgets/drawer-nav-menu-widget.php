@@ -571,7 +571,11 @@ class Drawer_Nav_Menu_Widget extends Base_Widget {
                 'type' => Controls_Manager::COLOR,
                 'default' => '#000000',
                 'selectors' => [
-                    '{{WRAPPER}} .ph-drawer-close svg' => 'fill: {{VALUE}};',
+                    '{{WRAPPER}} .ph-drawer-close' => 'color: {{VALUE}} !important;',
+                    '{{WRAPPER}} .ph-drawer-close svg' => 'fill: {{VALUE}} !important;',
+                    '{{WRAPPER}} .ph-drawer-close svg path' => 'fill: {{VALUE}} !important;',
+                    '{{WRAPPER}} .ph-drawer-close-icon' => 'fill: {{VALUE}} !important;',
+                    '{{WRAPPER}} .ph-drawer-close-icon path' => 'fill: {{VALUE}} !important;',
                 ],
             ]
         );
@@ -643,8 +647,8 @@ class Drawer_Nav_Menu_Widget extends Base_Widget {
 
         return [
             'menuText' => $settings['menu_text'],
-            'showIcon' => $settings['show_icon'] === 'yes',
             'iconPosition' => $settings['icon_position'],
+            'selectedIcon' => $settings['selected_icon'],
             'menuItems' => $menu_items,
             'footerItems' => $footer_items,
         ];

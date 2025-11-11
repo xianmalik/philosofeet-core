@@ -249,12 +249,11 @@
   padding-top: 20px;
 }
 
-.ph-drawer-close-icon {
-  fill: currentColor;
-}
-
-.ph-drawer-close-icon path {
-  fill: currentColor;
+.ph-drawer-close-icon,
+.ph-drawer-close-icon svg,
+.ph-drawer-close-icon svg * {
+  fill: inherit !important;
+  color: inherit !important;
 }
 
 /* Mobile: Fullscreen drawer */

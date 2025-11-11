@@ -18,6 +18,9 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
     footerItems = [],
   } = settings;
 
+  // Debug: Log icon data
+  console.log('[DrawerNavMenu] selectedIcon:', selectedIcon);
+
   // Check if viewport is mobile (< 768px)
   useEffect(() => {
     const checkMobile = () => {
@@ -40,16 +43,22 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
     setIsOpen(false);
   };
 
-  // Prevent body scroll when drawer is open
+  // Prevent body scroll when drawer is open (preserve scrollbar to avoid width bump)
   useEffect(() => {
     if (isOpen) {
+      // Get scrollbar width before hiding scroll
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
       document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
       document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
     }
 
     return () => {
       document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
     };
   }, [isOpen]);
 
@@ -67,7 +76,8 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
 
   // Render icon using Elementor's ICONS control format
   const renderIcon = () => {
-    if (!selectedIcon || !selectedIcon.value) {
+    // Check if we have a valid icon object
+    if (!selectedIcon || typeof selectedIcon !== 'object') {
       // Default hamburger icon if no icon selected
       return (
         <svg className="ph-hamburger-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -76,15 +86,20 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
       );
     }
 
-    // Handle SVG uploads
-    if (selectedIcon.library === 'svg' && selectedIcon.value?.url) {
-      return <img className="ph-hamburger-icon" src={selectedIcon.value.url} alt="Menu icon" />;
+    // Handle SVG uploads (Elementor stores uploaded SVGs differently)
+    if (selectedIcon.library === 'svg') {
+      // Check for URL in value object or direct URL
+      const svgUrl = selectedIcon.value?.url || selectedIcon.url;
+      if (svgUrl) {
+        return <img className="ph-hamburger-icon" src={svgUrl} alt="Menu icon" />;
+      }
     }
 
     // Handle font icons (Font Awesome, etc.)
-    if (selectedIcon.value) {
+    // Elementor stores the icon class in the 'value' property
+    if (selectedIcon.value && typeof selectedIcon.value === 'string') {
       return (
-        <i className={`ph-hamburger-icon ${selectedIcon.value}`} aria-hidden="true" tabIndex={-1} />
+        <i className={`ph-hamburger-icon ${selectedIcon.value}`} aria-hidden="true" />
       );
     }
 
