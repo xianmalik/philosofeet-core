@@ -23,6 +23,12 @@ Philosofeet Core is a WordPress plugin that provides custom Elementor widgets wi
 - `npm run package` - Clean, build, prepare, and create distribution zip
 - `npm run clean` - Remove build artifacts
 
+### Version Management
+- `npm run version <new-version>` - Update version across all plugin files
+  - Example: `npm run version 1.1.0`
+  - Updates: package.json, plugin header, and version constant
+  - Validates semantic versioning format
+
 ## Architecture & Data Flow
 
 ### Core Architecture Pattern

@@ -15,7 +15,8 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "clean": "node scripts/clean.js"
+    "clean": "node scripts/clean.js",
+    "version": "node scripts/update-version.js"
   },
   "keywords": ["wordpress", "elementor", "react", "widgets"],
   "author": {
