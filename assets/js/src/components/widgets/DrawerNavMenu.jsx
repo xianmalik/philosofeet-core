@@ -7,7 +7,6 @@ import React, { useState, useEffect } from 'react';
  */
 const DrawerNavMenu = ({ widgetId, settings }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   // Extract settings
   const {
@@ -20,18 +19,6 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
 
   // Debug: Log icon data
   console.log('[DrawerNavMenu] selectedIcon:', selectedIcon);
-
-  // Check if viewport is mobile (< 768px)
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // Toggle drawer
   const toggleDrawer = () => {
@@ -162,11 +149,10 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
         style={{
           position: 'fixed',
           top: 0,
-          right: isOpen ? 0 : isMobile ? '-100%' : '-100%',
+          right: isOpen ? 0 : '-100%',
           bottom: 0,
-          left: isMobile ? 0 : 'auto',
           zIndex: 999999,
-          transition: 'right 0.3s ease-in-out, left 0.3s ease-in-out',
+          transition: 'right 0.3s ease-in-out',
           overflowY: 'auto',
           boxShadow: isOpen ? '-2px 0 8px rgba(0, 0, 0, 0.15)' : 'none',
         }}

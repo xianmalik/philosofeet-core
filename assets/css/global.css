@@ -255,11 +255,3 @@
   fill: inherit !important;
   color: inherit !important;
 }
-
-/* Mobile: Fullscreen drawer */
-@media (max-width: 767px) {
-  .ph-drawer {
-    width: 100% !important;
-    left: 0 !important;
-  }
-}
