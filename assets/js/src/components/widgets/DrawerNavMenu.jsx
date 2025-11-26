@@ -85,9 +85,7 @@ const DrawerNavMenu = ({ widgetId, settings }) => {
     // Handle font icons (Font Awesome, etc.)
     // Elementor stores the icon class in the 'value' property
     if (selectedIcon.value && typeof selectedIcon.value === 'string') {
-      return (
-        <i className={`ph-hamburger-icon ${selectedIcon.value}`} aria-hidden="true" />
-      );
+      return <i className={`ph-hamburger-icon ${selectedIcon.value}`} />;
     }
 
     // Fallback to default icon
