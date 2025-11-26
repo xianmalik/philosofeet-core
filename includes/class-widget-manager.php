@@ -32,6 +32,7 @@ class Widget_Manager {
         $circular_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/circular-wheel-widget.php';
         $rss_feed_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/rss-feed-carousel-widget.php';
         $drawer_nav_menu_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/drawer-nav-menu-widget.php';
+        $image_swap_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/image-swap-widget.php';
 
         if (file_exists($base_widget)) {
             require_once $base_widget;
@@ -47,6 +48,10 @@ class Widget_Manager {
 
         if (file_exists($drawer_nav_menu_widget)) {
             require_once $drawer_nav_menu_widget;
+        }
+
+        if (file_exists($image_swap_widget)) {
+            require_once $image_swap_widget;
         }
     }
 
@@ -66,6 +71,11 @@ class Widget_Manager {
 
         if (class_exists('Philosofeet\Widgets\Drawer_Nav_Menu_Widget')) {
             $widget = new Widgets\Drawer_Nav_Menu_Widget();
+            $widgets_manager->register($widget);
+        }
+
+        if (class_exists('Philosofeet\Widgets\Image_Swap_Widget')) {
+            $widget = new Widgets\Image_Swap_Widget();
             $widgets_manager->register($widget);
         }
     }
