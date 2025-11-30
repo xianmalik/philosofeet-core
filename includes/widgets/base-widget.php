@@ -40,12 +40,7 @@ abstract class Base_Widget extends Widget_Base {
             data-widget-type="' . esc_attr($this->get_name()) . '"
             data-widget-id="' . esc_attr($this->get_id()) . '"
             data-widget-settings="' . esc_attr(wp_json_encode($widget_data)) . '"
-        >
-            <div class="philosofeet-loading" style="padding: 20px; background: #f0f0f0; border: 2px solid #ccc; text-align: center;">
-                <p><strong>Loading ' . esc_html($this->get_title()) . '...</strong></p>
-                <p><small>If this message persists, check the browser console for errors.</small></p>
-            </div>
-        </div>';
+        ></div>';
     }
 
     /**
@@ -73,12 +68,7 @@ abstract class Base_Widget extends Widget_Base {
             data-widget-id="{{ view.getIDInt() }}"
             data-widget-settings="{{ JSON.stringify(settings) }}"
             data-initialized="false"
-        >
-            <div class="philosofeet-loading" style="padding: 20px; background: #f0f0f0; border: 2px solid #ccc; text-align: center;">
-                <p><strong>Loading <?php echo esc_html($this->get_title()); ?>...</strong></p>
-                <p><small>If this message persists, check the browser console for errors.</small></p>
-            </div>
-        </div>
+        ></div>
         <?php
     }
 }
