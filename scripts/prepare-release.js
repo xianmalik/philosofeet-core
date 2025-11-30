@@ -36,6 +36,7 @@ const excludePatterns = [
   'Thumbs.db',
   '.claude',
   'release',
+  '*.todo'
 ];
 
 /**
