@@ -141,13 +141,16 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
 
   /**
    * Calculate rotation for inner ring text (perpendicular to radius)
+   * Text should read downwards/clockwise following the circle
    */
   const calculateInnerRotation = (angle) => {
-    // Text should follow the circle, perpendicular to radius
-    // On the left side (90-270), add 180 to keep text upright
-    let rotation = angle - 90; // Start perpendicular
+    // Text follows the circle, perpendicular to radius
+    // For readable downward text, rotate 90 degrees from the angle
+    let rotation = angle + 90;
+
+    // On the left side (90-270), flip 180 to keep text readable
     if (angle > 90 && angle < 270) {
-      rotation = angle + 90; // Flip for left side
+      rotation = angle - 90;
     }
     return rotation;
   };
