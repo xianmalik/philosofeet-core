@@ -214,7 +214,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                 transform={`rotate(${textRotation}, ${textPos.x}, ${textPos.y})`}
                 className="wheel-segment-text"
               >
-                {group.title.toUpperCase()}
+                {group?.title.toUpperCase()}
               </text>
             </g>
           );

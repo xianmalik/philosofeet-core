@@ -1,6 +1,6 @@
 {
   "name": "philosofeet-core",
-  "version": "1.0.6-alpha",
+  "version": "1.0.10-alpha",
   "description": "Custom Elementor widgets with React-based frontend rendering",
   "type": "module",
   "scripts": {
@@ -18,7 +18,12 @@
     "clean": "node scripts/clean.js",
     "version": "node scripts/update-version.js"
   },
-  "keywords": ["wordpress", "elementor", "react", "widgets"],
+  "keywords": [
+    "wordpress",
+    "elementor",
+    "react",
+    "widgets"
+  ],
   "author": {
     "name": "PaperHouse",
     "url": "https://paperhouse.agency"
