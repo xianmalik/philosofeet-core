@@ -135,7 +135,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                         'group_background_color' => '#2d5016',
                         'times' => "Morning\nNoon\nAfternoon",
                         'group_image' => [
-                            'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
+                            'url' => '',
                         ],
                     ],
                     [
@@ -145,7 +145,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                         'group_background_color' => '#3d6b1f',
                         'times' => "Evening\nNight",
                         'group_image' => [
-                            'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
+                            'url' => '',
                         ],
                     ],
                     [
@@ -155,7 +155,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                         'group_background_color' => '#8B4513',
                         'times' => "Morning\nAfternoon\nEvening",
                         'group_image' => [
-                            'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
+                            'url' => '',
                         ],
                     ],
                     [
@@ -165,7 +165,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                         'group_background_color' => '#a05a1f',
                         'times' => "Morning\nNoon",
                         'group_image' => [
-                            'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
+                            'url' => '',
                         ],
                     ],
                     [
@@ -175,7 +175,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                         'group_background_color' => '#5c1a1a',
                         'times' => "Afternoon\nEvening",
                         'group_image' => [
-                            'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
+                            'url' => '',
                         ],
                     ],
                     [
@@ -185,7 +185,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                         'group_background_color' => '#7a2323',
                         'times' => "Morning\nAfternoon\nEvening",
                         'group_image' => [
-                            'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
+                            'url' => '',
                         ],
                     ],
                     [
@@ -195,7 +195,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                         'group_background_color' => '#3d2817',
                         'times' => "Night\nMorning",
                         'group_image' => [
-                            'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
+                            'url' => '',
                         ],
                     ],
                     [
@@ -205,7 +205,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                         'group_background_color' => '#5a3d25',
                         'times' => "Morning\nAfternoon\nEvening\nNight",
                         'group_image' => [
-                            'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
+                            'url' => '',
                         ],
                     ],
                 ],
