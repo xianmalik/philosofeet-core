@@ -129,6 +129,21 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
     return rotation;
   };
 
+  /**
+   * Create gradient ID for a group
+   */
+  const getGradientId = (groupIndex) => `gradient-${widgetId}-${groupIndex}`;
+
+  /**
+   * Get fill reference for a group (either gradient URL or solid color)
+   */
+  const getGroupFill = (group, groupIndex) => {
+    if (group.background?.type === 'gradient') {
+      return `url(#${getGradientId(groupIndex)})`;
+    }
+    return group.background?.color || group.color || '#8B4513';
+  };
+
   // Render the wheel
   return (
     <div
@@ -136,7 +151,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
       style={{ width: wheelSizeValue, height: wheelSizeValue }}
     >
       <svg viewBox="0 0 100 100" className="wheel-svg" style={{ width: '100%', height: '100%' }}>
-        {/* Define filters for better visuals */}
+        {/* Define filters and gradients */}
         <defs>
           <filter id={`shadow-${widgetId}`} x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur in="SourceAlpha" stdDeviation="0.5" />
@@ -149,6 +164,66 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+
+          {/* Define gradients for groups */}
+          {groups.map((group, groupIndex) => {
+            if (group.background?.type !== 'gradient') return null;
+
+            const {
+              gradient_type = 'linear',
+              gradient_angle = 180,
+              gradient_position = 'center center',
+              color = '#8B4513',
+              color_b = '#000000',
+              color_stop = 0,
+              color_b_stop = 100,
+            } = group.background;
+
+            if (gradient_type === 'radial') {
+              // Parse gradient position (e.g., "center center" -> cx="50%" cy="50%")
+              const [fx = 'center', fy = 'center'] = gradient_position.split(' ');
+              const getCord = (val) => {
+                if (val === 'center') return '50%';
+                if (val === 'left' || val === 'top') return '0%';
+                if (val === 'right' || val === 'bottom') return '100%';
+                return val;
+              };
+
+              return (
+                <radialGradient
+                  key={getGradientId(groupIndex)}
+                  id={getGradientId(groupIndex)}
+                  cx={getCord(fx)}
+                  cy={getCord(fy)}
+                >
+                  <stop offset={`${color_stop}%`} stopColor={color} />
+                  <stop offset={`${color_b_stop}%`} stopColor={color_b} />
+                </radialGradient>
+              );
+            }
+
+            // Linear gradient
+            // Convert angle to SVG gradient vector
+            const angleRad = ((gradient_angle - 90) * Math.PI) / 180;
+            const x1 = 50 - 50 * Math.cos(angleRad);
+            const y1 = 50 - 50 * Math.sin(angleRad);
+            const x2 = 50 + 50 * Math.cos(angleRad);
+            const y2 = 50 + 50 * Math.sin(angleRad);
+
+            return (
+              <linearGradient
+                key={getGradientId(groupIndex)}
+                id={getGradientId(groupIndex)}
+                x1={`${x1}%`}
+                y1={`${y1}%`}
+                x2={`${x2}%`}
+                y2={`${y2}%`}
+              >
+                <stop offset={`${color_stop}%`} stopColor={color} />
+                <stop offset={`${color_b_stop}%`} stopColor={color_b} />
+              </linearGradient>
+            );
+          })}
         </defs>
 
         {/* LAYER 1: Outer thin ring - Group titles (Spring, Summer, Fall, Winter) */}
@@ -181,7 +256,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
               {/* Outer ring segment */}
               <path
                 d={createSegmentPath(startAngle, endAngle, outerRingInner, outerRingOuter)}
-                fill={group.color}
+                fill={getGroupFill(group, groupIndex)}
                 stroke="rgba(0,0,0,0.2)"
                 strokeWidth="0.1"
                 className="wheel-segment wheel-outer-segment"
@@ -189,11 +264,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
 
               {/* Define circular path for text */}
               <defs>
-                <path
-                  id={textPathId}
-                  d={textPath}
-                  fill="none"
-                />
+                <path id={textPathId} d={textPath} fill="none" />
               </defs>
 
               {/* Group title text following the arc */}
@@ -266,7 +337,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                 {/* Middle ring segment */}
                 <path
                   d={createSegmentPath(startAngle, endAngle, middleRingInner, middleRingOuter)}
-                  fill={group.color}
+                  fill={getGroupFill(group, groupIndex)}
                   stroke="rgba(0,0,0,0.2)"
                   strokeWidth="0.1"
                   className="wheel-segment wheel-middle-segment"
@@ -308,7 +379,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
               {/* Inner ring segment - ONE per group */}
               <path
                 d={createSegmentPath(startAngle, endAngle, innerRingInner, innerRingOuter)}
-                fill={group.color}
+                fill={getGroupFill(group, groupIndex)}
                 stroke="rgba(0,0,0,0.2)"
                 strokeWidth="0.1"
                 className="wheel-segment wheel-inner-segment"
@@ -349,10 +420,10 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
         {centerIcon ? (
           <image
             href={centerIcon}
-            x={50 - (centerIconSize.size / wheelSize.size * 100) / 2}
-            y={50 - (centerIconSize.size / wheelSize.size * 100) / 2}
-            width={centerIconSize.size / wheelSize.size * 100}
-            height={centerIconSize.size / wheelSize.size * 100}
+            x={50 - ((centerIconSize.size / wheelSize.size) * 100) / 2}
+            y={50 - ((centerIconSize.size / wheelSize.size) * 100) / 2}
+            width={(centerIconSize.size / wheelSize.size) * 100}
+            height={(centerIconSize.size / wheelSize.size) * 100}
             className="wheel-center-icon"
             preserveAspectRatio="xMidYMid meet"
           />

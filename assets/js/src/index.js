@@ -18,16 +18,20 @@ function getWidgetSettings(widgetElement) {
     if (widgetId) {
       try {
         // Find the element in the Elementor editor
-        const elements = elementor.getContainer ?
-          elementor.getContainer('document').view.children.findByCid(widgetElement.closest('.elementor-widget').getAttribute('data-model-cid'))
+        const elements = elementor.getContainer
+          ? elementor
+              .getContainer('document')
+              .view.children.findByCid(
+                widgetElement.closest('.elementor-widget').getAttribute('data-model-cid')
+              )
           : null;
 
         if (!elements && elementor.documents) {
           const currentDocument = elementor.documents.getCurrent();
-          if (currentDocument && currentDocument.container) {
+          if (currentDocument?.container) {
             const container = currentDocument.container;
-            const child = container.children.find(child => child.id === widgetId);
-            if (child && child.settings) {
+            const child = container.children.find((child) => child.id === widgetId);
+            if (child?.settings) {
               return prepareWidgetData(child.settings.attributes);
             }
           }
@@ -50,10 +54,14 @@ function prepareWidgetData(settings) {
   let groups = [];
   if (settings.groups && Array.isArray(settings.groups.models)) {
     // Backbone collection with models
-    groups = settings.groups.models.map(model => {
+    groups = settings.groups.models.map((model) => {
       const attrs = model.attributes;
-      const times = attrs.times ?
-        attrs.times.split('\n').map(s => s.trim()).filter(s => s) : [];
+      const times = attrs.times
+        ? attrs.times
+            .split('\n')
+            .map((s) => s.trim())
+            .filter((s) => s)
+        : [];
 
       return {
         title: attrs.group_title || '',
@@ -67,10 +75,14 @@ function prepareWidgetData(settings) {
     // Alternative Backbone collection structure
     try {
       const groupModels = Object.values(settings.groups.models);
-      groups = groupModels.map(model => {
+      groups = groupModels.map((model) => {
         const attrs = model.attributes || model;
-        const times = attrs.times ?
-          attrs.times.split('\n').map(s => s.trim()).filter(s => s) : [];
+        const times = attrs.times
+          ? attrs.times
+              .split('\n')
+              .map((s) => s.trim())
+              .filter((s) => s)
+          : [];
 
         return {
           title: attrs.group_title || '',
@@ -87,9 +99,13 @@ function prepareWidgetData(settings) {
     }
   } else if (Array.isArray(settings.groups)) {
     // Plain array (fallback)
-    groups = settings.groups.map(group => {
-      const times = group.times ?
-        group.times.split('\n').map(s => s.trim()).filter(s => s) : [];
+    groups = settings.groups.map((group) => {
+      const times = group.times
+        ? group.times
+            .split('\n')
+            .map((s) => s.trim())
+            .filter((s) => s)
+        : [];
 
       return {
         title: group.group_title || '',
@@ -158,8 +174,10 @@ function initializeWidgets() {
           let shouldReinitialize = false;
 
           mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' &&
-              mutation.attributeName === 'data-widget-settings') {
+            if (
+              mutation.type === 'attributes' &&
+              mutation.attributeName === 'data-widget-settings'
+            ) {
               shouldReinitialize = true;
             }
           });
@@ -195,7 +213,7 @@ function initializeWidgets() {
 
         observer.observe(widgetElement, {
           attributes: true,
-          attributeFilter: ['data-widget-settings']
+          attributeFilter: ['data-widget-settings'],
         });
 
         widgetObservers.set(widgetElement, observer);

@@ -79,12 +79,22 @@ class Circular_Wheel_Widget extends Base_Widget {
             ]
         );
 
-        $groups_repeater->add_control(
-            'group_color',
+        $groups_repeater->add_group_control(
+            Group_Control_Background::get_type(),
             [
-                'label' => __('Group Color', 'philosofeet-core'),
-                'type' => Controls_Manager::COLOR,
-                'default' => '#8B4513',
+                'name' => 'group_background',
+                'label' => __('Group Background', 'philosofeet-core'),
+                'types' => ['classic', 'gradient'],
+                'exclude' => ['image', 'video', 'attachment'],
+                'selector' => '{{WRAPPER}} .group-{{ID}}',
+                'fields_options' => [
+                    'background' => [
+                        'default' => 'classic',
+                    ],
+                    'color' => [
+                        'default' => '#8B4513',
+                    ],
+                ],
             ]
         );
 
@@ -121,7 +131,8 @@ class Circular_Wheel_Widget extends Base_Widget {
                     [
                         'group_title' => 'Spring',
                         'group_type' => 'Sandals',
-                        'group_color' => '#2d5016',
+                        'group_background_background' => 'classic',
+                        'group_background_color' => '#2d5016',
                         'times' => "Morning\nNoon\nAfternoon",
                         'group_image' => [
                             'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
@@ -130,7 +141,8 @@ class Circular_Wheel_Widget extends Base_Widget {
                     [
                         'group_title' => 'Spring',
                         'group_type' => 'Sneaker',
-                        'group_color' => '#3d6b1f',
+                        'group_background_background' => 'classic',
+                        'group_background_color' => '#3d6b1f',
                         'times' => "Evening\nNight",
                         'group_image' => [
                             'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
@@ -139,7 +151,8 @@ class Circular_Wheel_Widget extends Base_Widget {
                     [
                         'group_title' => 'Summer',
                         'group_type' => 'Flats',
-                        'group_color' => '#8B4513',
+                        'group_background_background' => 'classic',
+                        'group_background_color' => '#8B4513',
                         'times' => "Morning\nAfternoon\nEvening",
                         'group_image' => [
                             'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
@@ -148,7 +161,8 @@ class Circular_Wheel_Widget extends Base_Widget {
                     [
                         'group_title' => 'Summer',
                         'group_type' => 'Boots',
-                        'group_color' => '#a05a1f',
+                        'group_background_background' => 'classic',
+                        'group_background_color' => '#a05a1f',
                         'times' => "Morning\nNoon",
                         'group_image' => [
                             'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
@@ -157,7 +171,8 @@ class Circular_Wheel_Widget extends Base_Widget {
                     [
                         'group_title' => 'Fall',
                         'group_type' => 'Heels',
-                        'group_color' => '#5c1a1a',
+                        'group_background_background' => 'classic',
+                        'group_background_color' => '#5c1a1a',
                         'times' => "Afternoon\nEvening",
                         'group_image' => [
                             'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
@@ -166,7 +181,8 @@ class Circular_Wheel_Widget extends Base_Widget {
                     [
                         'group_title' => 'Fall',
                         'group_type' => 'Boots',
-                        'group_color' => '#7a2323',
+                        'group_background_background' => 'classic',
+                        'group_background_color' => '#7a2323',
                         'times' => "Morning\nAfternoon\nEvening",
                         'group_image' => [
                             'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
@@ -175,7 +191,8 @@ class Circular_Wheel_Widget extends Base_Widget {
                     [
                         'group_title' => 'Winter',
                         'group_type' => 'Slippers',
-                        'group_color' => '#3d2817',
+                        'group_background_background' => 'classic',
+                        'group_background_color' => '#3d2817',
                         'times' => "Night\nMorning",
                         'group_image' => [
                             'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
@@ -184,7 +201,8 @@ class Circular_Wheel_Widget extends Base_Widget {
                     [
                         'group_title' => 'Winter',
                         'group_type' => 'Boots',
-                        'group_color' => '#5a3d25',
+                        'group_background_background' => 'classic',
+                        'group_background_color' => '#5a3d25',
                         'times' => "Morning\nAfternoon\nEvening\nNight",
                         'group_image' => [
                             'url' => 'http://localhost/wp-content/uploads/2025/11/Asset-2.png',
@@ -467,10 +485,27 @@ class Circular_Wheel_Widget extends Base_Widget {
                     ? array_filter(array_map('trim', explode("\n", $group['times'])))
                     : [];
 
+                // Process background (solid color or gradient)
+                $background = [
+                    'type' => !empty($group['group_background_background']) ? $group['group_background_background'] : 'classic',
+                ];
+
+                if ($background['type'] === 'gradient') {
+                    $background['gradient_type'] = !empty($group['group_background_gradient_type']) ? $group['group_background_gradient_type'] : 'linear';
+                    $background['gradient_angle'] = !empty($group['group_background_gradient_angle']['size']) ? $group['group_background_gradient_angle']['size'] : 180;
+                    $background['gradient_position'] = !empty($group['group_background_gradient_position']) ? $group['group_background_gradient_position'] : 'center center';
+                    $background['color'] = !empty($group['group_background_color']) ? $group['group_background_color'] : '#8B4513';
+                    $background['color_b'] = !empty($group['group_background_color_b']) ? $group['group_background_color_b'] : '#000000';
+                    $background['color_stop'] = !empty($group['group_background_color_stop']['size']) ? $group['group_background_color_stop']['size'] : 0;
+                    $background['color_b_stop'] = !empty($group['group_background_color_b_stop']['size']) ? $group['group_background_color_b_stop']['size'] : 100;
+                } else {
+                    $background['color'] = !empty($group['group_background_color']) ? $group['group_background_color'] : '#8B4513';
+                }
+
                 $groups[] = [
                     'title' => $group['group_title'],
                     'type' => $group['group_type'],
-                    'color' => $group['group_color'],
+                    'background' => $background,
                     'image' => !empty($group['group_image']['url']) ? $group['group_image']['url'] : '',
                     'times' => $times,
                 ];
