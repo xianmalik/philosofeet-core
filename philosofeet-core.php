@@ -3,7 +3,7 @@
  * Plugin Name: Philosofeet Core
  * Plugin URI: https://paperhouse.agency
  * Description: Custom Elementor widgets with React-based frontend rendering
- * Version: 1.0.10-alpha
+ * Version: 1.1.0-alpha
  * Author: PaperHouse
  * Author URI: https://paperhouse.agency
  * Text Domain: philosofeet-core
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('PHILOSOFEET_CORE_VERSION', '1.0.10-alpha');
+define('PHILOSOFEET_CORE_VERSION', '1.1.0-alpha');
 define('PHILOSOFEET_CORE_FILE', __FILE__);
 define('PHILOSOFEET_CORE_PATH', plugin_dir_path(__FILE__));
 define('PHILOSOFEET_CORE_URL', plugin_dir_url(__FILE__));

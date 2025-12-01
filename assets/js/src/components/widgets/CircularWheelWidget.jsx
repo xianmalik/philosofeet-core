@@ -60,36 +60,6 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   const anglePerGroup = 360 / totalGroups;
 
   /**
-   * Darken a color by a percentage
-   */
-  const darkenColor = (hexColor, percent) => {
-    const r = Number.parseInt(hexColor.substr(1, 2), 16);
-    const g = Number.parseInt(hexColor.substr(3, 2), 16);
-    const b = Number.parseInt(hexColor.substr(5, 2), 16);
-
-    const newR = Math.floor(r * (1 - percent / 100));
-    const newG = Math.floor(g * (1 - percent / 100));
-    const newB = Math.floor(b * (1 - percent / 100));
-
-    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
-  };
-
-  /**
-   * Lighten a color by a percentage
-   */
-  const lightenColor = (hexColor, percent) => {
-    const r = Number.parseInt(hexColor.substr(1, 2), 16);
-    const g = Number.parseInt(hexColor.substr(3, 2), 16);
-    const b = Number.parseInt(hexColor.substr(5, 2), 16);
-
-    const newR = Math.floor(r + (255 - r) * (percent / 100));
-    const newG = Math.floor(g + (255 - g) * (percent / 100));
-    const newB = Math.floor(b + (255 - b) * (percent / 100));
-
-    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
-  };
-
-  /**
    * Create SVG path for a segment
    */
   const createSegmentPath = (startAngle, endAngle, innerRadius, outerRadius) => {
@@ -214,7 +184,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                 transform={`rotate(${textRotation}, ${textPos.x}, ${textPos.y})`}
                 className="wheel-segment-text"
               >
-                {group?.title.toUpperCase()}
+                {group?.title ? group.title.toUpperCase() : ''}
               </text>
             </g>
           );
@@ -255,9 +225,6 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           const groupEndAngle = (groupIndex + 1) * anglePerGroup;
           const anglePerTime = (groupEndAngle - groupStartAngle) / times.length;
 
-          // Use slightly lighter color for middle ring
-          const middleColor = lightenColor(group.color, 10);
-
           return times.map((time, timeIndex) => {
             const startAngle = groupStartAngle + timeIndex * anglePerTime;
             const endAngle = groupStartAngle + (timeIndex + 1) * anglePerTime - gapSizeValue / 10;
@@ -272,7 +239,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                 {/* Middle ring segment */}
                 <path
                   d={createSegmentPath(startAngle, endAngle, middleRingInner, middleRingOuter)}
-                  fill={middleColor}
+                  fill={group.color}
                   stroke="rgba(0,0,0,0.2)"
                   strokeWidth="0.1"
                   className="wheel-segment wheel-middle-segment"
@@ -307,8 +274,6 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           const textPos = calculatePosition(midAngle, textRadius);
           const textRotation = calculateInnerRotation(midAngle);
 
-          // Use darker color for inner ring
-          const innerColor = darkenColor(group.color, 30);
           const typeLabel = group.type || '';
 
           return (
@@ -316,7 +281,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
               {/* Inner ring segment - ONE per group */}
               <path
                 d={createSegmentPath(startAngle, endAngle, innerRingInner, innerRingOuter)}
-                fill={innerColor}
+                fill={group.color}
                 stroke="rgba(0,0,0,0.2)"
                 strokeWidth="0.1"
                 className="wheel-segment wheel-inner-segment"
