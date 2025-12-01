@@ -156,10 +156,25 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           const startAngle = groupIndex * anglePerGroup;
           const endAngle = (groupIndex + 1) * anglePerGroup - gapSizeValue / 10;
 
-          const midAngle = (startAngle + endAngle) / 2;
           const textRadius = (outerRingInner + outerRingOuter) / 2;
-          const textPos = calculatePosition(midAngle, textRadius);
-          const textRotation = calculateRotation(midAngle);
+
+          // Create circular path for text
+          const textPathId = `text-path-${widgetId}-${groupIndex}`;
+
+          // Calculate arc path for the text to follow
+          const startAngleRad = ((startAngle - 90) * Math.PI) / 180;
+          const endAngleRad = ((endAngle - 90) * Math.PI) / 180;
+          const x1 = 50 + textRadius * Math.cos(startAngleRad);
+          const y1 = 50 + textRadius * Math.sin(startAngleRad);
+          const x2 = 50 + textRadius * Math.cos(endAngleRad);
+          const y2 = 50 + textRadius * Math.sin(endAngleRad);
+          const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
+
+          // Reverse path for bottom half to keep text upright
+          const isBottomHalf = startAngle > 90 && startAngle < 270;
+          const textPath = isBottomHalf
+            ? `M ${x2} ${y2} A ${textRadius} ${textRadius} 0 ${largeArcFlag} 0 ${x1} ${y1}`
+            : `M ${x1} ${y1} A ${textRadius} ${textRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`;
 
           return (
             <g key={`outer-${group.title}-${groupIndex}`}>
@@ -172,20 +187,30 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                 className="wheel-segment wheel-outer-segment"
               />
 
-              {/* Group title text */}
-              <text
-                x={textPos.x}
-                y={textPos.y}
-                fill={groupTitleColor}
-                fontSize="1.75"
-                fontWeight="bold"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                transform={`rotate(${textRotation}, ${textPos.x}, ${textPos.y})`}
-                className="wheel-segment-text"
-              >
-                {group?.title ? group.title.toUpperCase() : ''}
-              </text>
+              {/* Define circular path for text */}
+              <defs>
+                <path
+                  id={textPathId}
+                  d={textPath}
+                  fill="none"
+                />
+              </defs>
+
+              {/* Group title text following the arc */}
+              {group?.title && (
+                <text
+                  fill={groupTitleColor}
+                  fontSize="1.75"
+                  fontWeight="bold"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="wheel-segment-text"
+                >
+                  <textPath href={`#${textPathId}`} startOffset="50%">
+                    {group.title.toUpperCase()}
+                  </textPath>
+                </text>
+              )}
             </g>
           );
         })}
