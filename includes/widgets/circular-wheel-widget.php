@@ -98,6 +98,25 @@ class Circular_Wheel_Widget extends Base_Widget {
             ]
         );
 
+        // Background opacity control
+        $groups_repeater->add_control(
+            'group_background_opacity',
+            [
+                'label' => __('Background Opacity', 'philosofeet-core'),
+                'type' => Controls_Manager::SLIDER,
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 1,
+                        'step' => 0.01,
+                    ],
+                ],
+                'default' => [
+                    'size' => 1,
+                ],
+            ]
+        );
+
         $groups_repeater->add_control(
             'group_image',
             [
@@ -498,9 +517,18 @@ class Circular_Wheel_Widget extends Base_Widget {
                     $background['color_b'] = !empty($group['group_background_color_b']) ? $group['group_background_color_b'] : '#000000';
                     $background['color_stop'] = !empty($group['group_background_color_stop']['size']) ? $group['group_background_color_stop']['size'] : 0;
                     $background['color_b_stop'] = !empty($group['group_background_color_b_stop']['size']) ? $group['group_background_color_b_stop']['size'] : 100;
+
+                    // Third color stop (optional)
+                    if (!empty($group['group_background_color_c'])) {
+                        $background['color_c'] = $group['group_background_color_c'];
+                        $background['color_c_stop'] = !empty($group['group_background_color_c_stop']['size']) ? $group['group_background_color_c_stop']['size'] : 50;
+                    }
                 } else {
                     $background['color'] = !empty($group['group_background_color']) ? $group['group_background_color'] : '#8B4513';
                 }
+
+                // Background opacity
+                $background['opacity'] = !empty($group['group_background_opacity']['size']) ? $group['group_background_opacity']['size'] : 1;
 
                 $groups[] = [
                     'title' => $group['group_title'],

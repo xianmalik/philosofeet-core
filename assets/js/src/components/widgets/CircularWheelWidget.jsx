@@ -135,13 +135,23 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   const getGradientId = (groupIndex) => `gradient-${widgetId}-${groupIndex}`;
 
   /**
-   * Get fill reference for a group (either gradient URL or solid color)
+   * Get fill reference for a group (either gradient URL or solid color with opacity)
    */
   const getGroupFill = (group, groupIndex) => {
     if (group.background?.type === 'gradient') {
       return `url(#${getGradientId(groupIndex)})`;
     }
-    return group.background?.color || group.color || '#8B4513';
+
+    // Solid color with opacity
+    const color = group.background?.color || group.color || '#8B4513';
+    const opacity = group.background?.opacity ?? 1;
+
+    // Convert hex to rgba
+    const r = Number.parseInt(color.slice(1, 3), 16);
+    const g = Number.parseInt(color.slice(3, 5), 16);
+    const b = Number.parseInt(color.slice(5, 7), 16);
+
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   };
 
   // Render the wheel
@@ -175,9 +185,20 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
               gradient_position = 'center center',
               color = '#8B4513',
               color_b = '#000000',
+              color_c = null,
               color_stop = 0,
               color_b_stop = 100,
+              color_c_stop = 50,
+              opacity = 1,
             } = group.background;
+
+            // Helper to convert hex to rgba
+            const hexToRgba = (hex, alpha) => {
+              const r = Number.parseInt(hex.slice(1, 3), 16);
+              const g = Number.parseInt(hex.slice(3, 5), 16);
+              const b = Number.parseInt(hex.slice(5, 7), 16);
+              return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            };
 
             if (gradient_type === 'radial') {
               // Parse gradient position (e.g., "center center" -> cx="50%" cy="50%")
@@ -196,8 +217,11 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                   cx={getCord(fx)}
                   cy={getCord(fy)}
                 >
-                  <stop offset={`${color_stop}%`} stopColor={color} />
-                  <stop offset={`${color_b_stop}%`} stopColor={color_b} />
+                  <stop offset={`${color_stop}%`} stopColor={hexToRgba(color, opacity)} />
+                  {color_c && (
+                    <stop offset={`${color_c_stop}%`} stopColor={hexToRgba(color_c, opacity)} />
+                  )}
+                  <stop offset={`${color_b_stop}%`} stopColor={hexToRgba(color_b, opacity)} />
                 </radialGradient>
               );
             }
@@ -219,8 +243,11 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                 x2={`${x2}%`}
                 y2={`${y2}%`}
               >
-                <stop offset={`${color_stop}%`} stopColor={color} />
-                <stop offset={`${color_b_stop}%`} stopColor={color_b} />
+                <stop offset={`${color_stop}%`} stopColor={hexToRgba(color, opacity)} />
+                {color_c && (
+                  <stop offset={`${color_c_stop}%`} stopColor={hexToRgba(color_c, opacity)} />
+                )}
+                <stop offset={`${color_b_stop}%`} stopColor={hexToRgba(color_b, opacity)} />
               </linearGradient>
             );
           })}
