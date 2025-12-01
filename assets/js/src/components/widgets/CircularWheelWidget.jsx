@@ -243,7 +243,8 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
 
         {/* LAYER 3: Middle ring - Time slices (Morning, Afternoon, Evening, Night) */}
         {groups.map((group, groupIndex) => {
-          const times = group.times || [];
+          if (!group) return null;
+          const times = Array.isArray(group.times) ? group.times : [];
           if (times.length === 0) return null;
 
           const groupStartAngle = groupIndex * anglePerGroup;
@@ -251,6 +252,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           const anglePerTime = (groupEndAngle - groupStartAngle) / times.length;
 
           return times.map((time, timeIndex) => {
+            if (!time) return null;
             const startAngle = groupStartAngle + timeIndex * anglePerTime;
             const endAngle = groupStartAngle + (timeIndex + 1) * anglePerTime - gapSizeValue / 10;
 
@@ -282,7 +284,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                   transform={`rotate(${textRotation}, ${textPos.x}, ${textPos.y})`}
                   className="wheel-segment-text"
                 >
-                  {time.toUpperCase()}
+                  {typeof time === 'string' ? time.toUpperCase() : time}
                 </text>
               </g>
             );
