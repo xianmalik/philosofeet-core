@@ -347,10 +347,10 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
         {centerIcon ? (
           <image
             href={centerIcon}
-            x={50 - centerRadius}
-            y={50 - centerRadius}
-            width={centerRadius * 2}
-            height={centerRadius * 2}
+            x={50 - (centerIconSize.size / wheelSize.size * 100) / 2}
+            y={50 - (centerIconSize.size / wheelSize.size * 100) / 2}
+            width={centerIconSize.size / wheelSize.size * 100}
+            height={centerIconSize.size / wheelSize.size * 100}
             className="wheel-center-icon"
             preserveAspectRatio="xMidYMid meet"
           />
