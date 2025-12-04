@@ -15,12 +15,6 @@ const ContentSlider = ({ widgetId, settings }) => {
     infiniteLoop = true,
     showNavigation = true,
     showPagination = true,
-    slideEffect = 'slide',
-    sliderHeight = { size: 500, unit: 'px' },
-    sliderBackgroundColor = '#f5f5f5',
-    navArrowColor = '#333333',
-    navArrowBgColor = '#ffffff',
-    navArrowSize = { size: 40, unit: 'px' },
     paginationDotColor = '#cccccc',
     paginationDotActiveColor = '#333333',
     paginationDotSize = { size: 10, unit: 'px' },
@@ -94,53 +88,22 @@ const ContentSlider = ({ widgetId, settings }) => {
   const containerStyle = {
     position: 'relative',
     width: '100%',
-    height: `${sliderHeight.size}${sliderHeight.unit}`,
-    backgroundColor: sliderBackgroundColor,
-    overflow: 'hidden',
   };
 
   const viewportStyle = {
     overflow: 'hidden',
     width: '100%',
-    height: '100%',
   };
 
   const containerInnerStyle = {
     display: 'flex',
-    height: '100%',
     touchAction: 'pan-y pinch-zoom',
   };
 
-  const slideStyle = (index) => ({
+  const slideStyle = () => ({
     position: 'relative',
     flex: '0 0 100%',
     minWidth: 0,
-    height: '100%',
-    overflow: 'auto',
-    padding: '20px',
-    backgroundColor: slides[index]?.backgroundColor || 'transparent',
-  });
-
-  const navButtonStyle = (direction) => ({
-    position: 'absolute',
-    top: '50%',
-    [direction]: '20px',
-    transform: 'translateY(-50%)',
-    width: `${navArrowSize.size}${navArrowSize.unit}`,
-    height: `${navArrowSize.size}${navArrowSize.unit}`,
-    backgroundColor: navArrowBgColor,
-    color: navArrowColor,
-    border: 'none',
-    borderRadius: '50%',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: `${navArrowSize.size * 0.5}${navArrowSize.unit}`,
-    zIndex: 10,
-    transition: 'all 0.3s ease',
-    opacity: 0.8,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
   });
 
   const paginationStyle = {
@@ -183,7 +146,7 @@ const ContentSlider = ({ widgetId, settings }) => {
             <div
               key={slide.id || index}
               className={`embla__slide slide-item ${index === selectedIndex ? 'active' : ''}`}
-              style={slideStyle(index)}
+              style={slideStyle()}
             >
               {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Elementor template content is trusted */}
               <div className="slide-content" dangerouslySetInnerHTML={{ __html: slide.content }} />
@@ -191,46 +154,6 @@ const ContentSlider = ({ widgetId, settings }) => {
           ))}
         </div>
       </div>
-
-      {/* Navigation Arrows */}
-      {showNavigation && slides.length > 1 && (
-        <>
-          <button
-            type="button"
-            className="embla__prev"
-            style={navButtonStyle('left')}
-            onClick={scrollPrev}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '1';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-            }}
-            aria-label="Previous slide"
-          >
-            &#8249;
-          </button>
-          <button
-            type="button"
-            className="embla__next"
-            style={navButtonStyle('right')}
-            onClick={scrollNext}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '1';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-            }}
-            aria-label="Next slide"
-          >
-            &#8250;
-          </button>
-        </>
-      )}
 
       {/* Pagination Dots */}
       {showPagination && slides.length > 1 && (

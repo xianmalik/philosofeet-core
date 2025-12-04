@@ -78,51 +78,12 @@ class Content_Slider_Widget extends Base_Widget {
         );
 
         $repeater->add_control(
-            'content_type',
-            [
-                'label' => __('Content Type', 'philosofeet-core'),
-                'type' => Controls_Manager::SELECT,
-                'default' => 'template',
-                'options' => [
-                    'template' => __('Saved Template', 'philosofeet-core'),
-                    'editor' => __('Rich Editor', 'philosofeet-core'),
-                ],
-            ]
-        );
-
-        $repeater->add_control(
-            'slide_content',
-            [
-                'label' => __('Content', 'philosofeet-core'),
-                'type' => Controls_Manager::WYSIWYG,
-                'default' => __('<h2>Slide Title</h2><p>Add your content here. You can use the rich editor to add text, images, and basic formatting.</p>', 'philosofeet-core'),
-                'condition' => [
-                    'content_type' => 'editor',
-                ],
-            ]
-        );
-
-        $repeater->add_control(
             'slide_template',
             [
                 'label' => __('Choose Template', 'philosofeet-core'),
                 'type' => Controls_Manager::SELECT,
                 'default' => '',
                 'options' => $this->get_saved_templates(),
-                'condition' => [
-                    'content_type' => 'template',
-                ],
-            ]
-        );
-
-        $repeater->add_control(
-            'slide_background_color',
-            [
-                'label' => __('Background Color', 'philosofeet-core'),
-                'type' => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} {{CURRENT_ITEM}}' => 'background-color: {{VALUE}}',
-                ],
             ]
         );
 
@@ -135,15 +96,12 @@ class Content_Slider_Widget extends Base_Widget {
                 'default' => [
                     [
                         'slide_title' => __('Slide #1', 'philosofeet-core'),
-                        'content_type' => 'template',
                     ],
                     [
                         'slide_title' => __('Slide #2', 'philosofeet-core'),
-                        'content_type' => 'template',
                     ],
                     [
                         'slide_title' => __('Slide #3', 'philosofeet-core'),
-                        'content_type' => 'template',
                     ],
                 ],
                 'title_field' => '{{{ slide_title }}}',
@@ -251,108 +209,6 @@ class Content_Slider_Widget extends Base_Widget {
 
         $this->end_controls_section();
 
-        // Style Section - Slider Container
-        $this->start_controls_section(
-            'slider_style_section',
-            [
-                'label' => __('Slider Container', 'philosofeet-core'),
-                'tab' => Controls_Manager::TAB_STYLE,
-            ]
-        );
-
-        $this->add_responsive_control(
-            'slider_height',
-            [
-                'label' => __('Height', 'philosofeet-core'),
-                'type' => Controls_Manager::SLIDER,
-                'size_units' => ['px', 'vh', '%'],
-                'range' => [
-                    'px' => [
-                        'min' => 200,
-                        'max' => 1000,
-                        'step' => 10,
-                    ],
-                    'vh' => [
-                        'min' => 10,
-                        'max' => 100,
-                        'step' => 1,
-                    ],
-                    '%' => [
-                        'min' => 10,
-                        'max' => 100,
-                        'step' => 1,
-                    ],
-                ],
-                'default' => [
-                    'unit' => 'px',
-                    'size' => 500,
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'slider_background_color',
-            [
-                'label' => __('Background Color', 'philosofeet-core'),
-                'type' => Controls_Manager::COLOR,
-                'default' => '#f5f5f5',
-            ]
-        );
-
-        $this->end_controls_section();
-
-        // Style Section - Navigation
-        $this->start_controls_section(
-            'navigation_style_section',
-            [
-                'label' => __('Navigation', 'philosofeet-core'),
-                'tab' => Controls_Manager::TAB_STYLE,
-                'condition' => [
-                    'show_navigation' => 'yes',
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'nav_arrow_color',
-            [
-                'label' => __('Arrow Color', 'philosofeet-core'),
-                'type' => Controls_Manager::COLOR,
-                'default' => '#333333',
-            ]
-        );
-
-        $this->add_control(
-            'nav_arrow_bg_color',
-            [
-                'label' => __('Arrow Background Color', 'philosofeet-core'),
-                'type' => Controls_Manager::COLOR,
-                'default' => '#ffffff',
-            ]
-        );
-
-        $this->add_responsive_control(
-            'nav_arrow_size',
-            [
-                'label' => __('Arrow Size', 'philosofeet-core'),
-                'type' => Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => [
-                    'px' => [
-                        'min' => 20,
-                        'max' => 100,
-                        'step' => 1,
-                    ],
-                ],
-                'default' => [
-                    'unit' => 'px',
-                    'size' => 40,
-                ],
-            ]
-        );
-
-        $this->end_controls_section();
-
         // Style Section - Pagination
         $this->start_controls_section(
             'pagination_style_section',
@@ -433,13 +289,11 @@ class Content_Slider_Widget extends Base_Widget {
             $slide_data = [
                 'id' => $index,
                 'title' => $slide['slide_title'] ?? '',
-                'backgroundColor' => $slide['slide_background_color'] ?? '',
             ];
 
-            // Render content based on type
+            // Render template content
             $content = '';
-            if (isset($slide['content_type']) && $slide['content_type'] === 'template' && !empty($slide['slide_template'])) {
-                // Render saved template
+            if (!empty($slide['slide_template'])) {
                 $template_id = $slide['slide_template'];
 
                 // Check if template exists
@@ -457,8 +311,7 @@ class Content_Slider_Widget extends Base_Widget {
                     $content = '<div style="padding: 40px; text-align: center; color: #999;"><p>Template not found.</p><p>Template ID: ' . esc_html($template_id) . '</p></div>';
                 }
             } else {
-                // Render WYSIWYG content
-                $content = isset($slide['slide_content']) ? $slide['slide_content'] : '<div style="padding: 40px; text-align: center; color: #999;">No content added yet. Please add content or select a template.</div>';
+                $content = '<div style="padding: 40px; text-align: center; color: #999;">No template selected. Please select a section template.</div>';
             }
 
             // Base64 encode the content to prevent JSON parsing issues with special characters
