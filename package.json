@@ -18,12 +18,7 @@
     "clean": "node scripts/clean.js",
     "version": "node scripts/update-version.js"
   },
-  "keywords": [
-    "wordpress",
-    "elementor",
-    "react",
-    "widgets"
-  ],
+  "keywords": ["wordpress", "elementor", "react", "widgets"],
   "author": {
     "name": "PaperHouse",
     "url": "https://paperhouse.agency"

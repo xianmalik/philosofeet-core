@@ -34,6 +34,8 @@ class Widget_Manager {
         $drawer_nav_menu_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/drawer-nav-menu-widget.php';
         $image_swap_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/image-swap-widget.php';
         $sticky_image_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/sticky-image-widget.php';
+        $content_slider_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/content-slider-widget.php';
+        $nested_slider_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/nested-slider-widget.php';
 
         if (file_exists($base_widget)) {
             require_once $base_widget;
@@ -57,6 +59,14 @@ class Widget_Manager {
 
         if (file_exists($sticky_image_widget)) {
             require_once $sticky_image_widget;
+        }
+
+        if (file_exists($content_slider_widget)) {
+            require_once $content_slider_widget;
+        }
+
+        if (file_exists($nested_slider_widget)) {
+            require_once $nested_slider_widget;
         }
     }
 
@@ -86,6 +96,16 @@ class Widget_Manager {
 
         if (class_exists('Philosofeet\Widgets\Sticky_Image_Widget')) {
             $widget = new Widgets\Sticky_Image_Widget();
+            $widgets_manager->register($widget);
+        }
+
+        if (class_exists('Philosofeet\Widgets\Content_Slider_Widget')) {
+            $widget = new Widgets\Content_Slider_Widget();
+            $widgets_manager->register($widget);
+        }
+
+        if (class_exists('Philosofeet\Widgets\Nested_Slider_Widget')) {
+            $widget = new Widgets\Nested_Slider_Widget();
             $widgets_manager->register($widget);
         }
     }
