@@ -107,13 +107,11 @@ const ContentSlider = ({ widgetId, settings }) => {
   });
 
   const paginationStyle = {
-    position: 'absolute',
-    bottom: '20px',
-    left: '50%',
-    transform: 'translateX(-50%)',
     display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: '10px',
-    zIndex: 10,
+    padding: '20px 0',
   };
 
   const dotStyle = (index) => ({
@@ -124,7 +122,8 @@ const ContentSlider = ({ widgetId, settings }) => {
     border: 'none',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
-    transform: index === selectedIndex ? 'scale(1.2)' : 'scale(1)',
+    padding: 0,
+    flexShrink: 0,
   });
 
   if (slides.length === 0) {
@@ -165,16 +164,6 @@ const ContentSlider = ({ widgetId, settings }) => {
               className={`embla__dot ${index === selectedIndex ? 'active' : ''}`}
               style={dotStyle(index)}
               onClick={() => scrollTo(index)}
-              onMouseEnter={(e) => {
-                if (index !== selectedIndex) {
-                  e.currentTarget.style.transform = 'scale(1.1)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (index !== selectedIndex) {
-                  e.currentTarget.style.transform = 'scale(1)';
-                }
-              }}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}

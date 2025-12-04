@@ -127,7 +127,7 @@ class Content_Slider_Widget extends Base_Widget {
                 'label_on' => __('Yes', 'philosofeet-core'),
                 'label_off' => __('No', 'philosofeet-core'),
                 'return_value' => 'yes',
-                'default' => 'yes',
+                'default' => 'no',
             ]
         );
 
