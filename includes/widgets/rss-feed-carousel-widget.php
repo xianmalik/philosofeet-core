@@ -816,8 +816,8 @@ class RSS_Feed_Carousel_Widget extends Base_Widget {
             'feedLimit' => $settings['feed_limit'],
             'itemsPerRow' => [
                 'desktop' => $settings['items_per_row'],
-                'tablet' => $settings['items_per_row_tablet'],
-                'mobile' => $settings['items_per_row_mobile'],
+                'tablet' => $settings['items_per_row_tablet'] ?? $settings['items_per_row'],
+                'mobile' => $settings['items_per_row_mobile'] ?? $settings['items_per_row_tablet'] ?? $settings['items_per_row'],
             ],
             'autoplay' => $settings['autoplay'] === 'yes',
             'autoplaySpeed' => $settings['autoplay_speed'],

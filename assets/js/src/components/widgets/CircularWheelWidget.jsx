@@ -329,10 +329,10 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
             <image
               key={`image-${groupIndex}`}
               href={group.image}
-              x={imagePos.x - 2.5}
-              y={imagePos.y - 2.5}
-              width="5"
-              height="5"
+              x={imagePos.x - 5}
+              y={imagePos.y - 5}
+              width="10"
+              height="10"
               className="wheel-segment-image"
               preserveAspectRatio="xMidYMid meet"
             />
