@@ -128,6 +128,20 @@ class Circular_Wheel_Widget extends Base_Widget {
             ]
         );
 
+        $groups_repeater->add_control(
+            'group_link',
+            [
+                'label' => __('Link', 'philosofeet-core'),
+                'type' => Controls_Manager::URL,
+                'placeholder' => __('https://your-link.com', 'philosofeet-core'),
+                'default' => [
+                    'url' => '',
+                    'is_external' => false,
+                    'nofollow' => false,
+                ],
+            ]
+        );
+
         // Times nested repeater
         $groups_repeater->add_control(
             'times',
@@ -530,11 +544,19 @@ class Circular_Wheel_Widget extends Base_Widget {
                 // Background opacity
                 $background['opacity'] = !empty($group['group_background_opacity']['size']) ? $group['group_background_opacity']['size'] : 1;
 
+                // Process link data
+                $link = [
+                    'url' => !empty($group['group_link']['url']) ? $group['group_link']['url'] : '',
+                    'is_external' => !empty($group['group_link']['is_external']),
+                    'nofollow' => !empty($group['group_link']['nofollow']),
+                ];
+
                 $groups[] = [
                     'title' => $group['group_title'],
                     'type' => $group['group_type'],
                     'background' => $background,
                     'image' => !empty($group['group_image']['url']) ? $group['group_image']['url'] : '',
+                    'link' => $link,
                     'times' => $times,
                 ];
             }

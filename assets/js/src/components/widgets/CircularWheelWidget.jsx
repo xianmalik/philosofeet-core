@@ -253,48 +253,83 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           })}
         </defs>
 
-        {/* LAYER 1: Outer thin ring - Group titles (Spring, Summer, Fall, Winter) */}
+        {/* Render all groups - each group contains all its layers (outer, image, middle, inner) */}
         {groups.map((group, groupIndex) => {
-          const startAngle = groupIndex * anglePerGroup;
-          const endAngle = (groupIndex + 1) * anglePerGroup - gapSizeValue / 10;
+          const groupStartAngle = groupIndex * anglePerGroup;
+          const groupEndAngle = (groupIndex + 1) * anglePerGroup - gapSizeValue / 10;
+          const groupMidAngle = (groupStartAngle + groupEndAngle) / 2;
 
+          // Check if group has a link
+          const hasLink = group.link && group.link.url;
+          const linkProps = hasLink
+            ? {
+                onClick: (e) => {
+                  if (group.link.url) {
+                    if (group.link.is_external) {
+                      window.open(
+                        group.link.url,
+                        '_blank',
+                        group.link.nofollow ? 'noopener noreferrer nofollow' : 'noopener noreferrer',
+                      );
+                    } else {
+                      window.location.href = group.link.url;
+                    }
+                  }
+                },
+                style: { cursor: 'pointer' },
+                className: 'wheel-segment-group wheel-segment-clickable',
+              }
+            : {
+                className: 'wheel-segment-group',
+              };
+
+          // Prepare outer ring text path
           const textRadius = (outerRingInner + outerRingOuter) / 2;
-
-          // Create circular path for text
           const textPathId = `text-path-${widgetId}-${groupIndex}`;
-
-          // Calculate arc path for the text to follow
-          const startAngleRad = ((startAngle - 90) * Math.PI) / 180;
-          const endAngleRad = ((endAngle - 90) * Math.PI) / 180;
+          const startAngleRad = ((groupStartAngle - 90) * Math.PI) / 180;
+          const endAngleRad = ((groupEndAngle - 90) * Math.PI) / 180;
           const x1 = 50 + textRadius * Math.cos(startAngleRad);
           const y1 = 50 + textRadius * Math.sin(startAngleRad);
           const x2 = 50 + textRadius * Math.cos(endAngleRad);
           const y2 = 50 + textRadius * Math.sin(endAngleRad);
-          const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
-
-          // Reverse path for bottom half to keep text upright
-          const isBottomHalf = startAngle > 90 && startAngle < 270;
+          const largeArcFlag = groupEndAngle - groupStartAngle > 180 ? 1 : 0;
+          const isBottomHalf = groupStartAngle > 90 && groupStartAngle < 270;
           const textPath = isBottomHalf
             ? `M ${x2} ${y2} A ${textRadius} ${textRadius} 0 ${largeArcFlag} 0 ${x1} ${y1}`
             : `M ${x1} ${y1} A ${textRadius} ${textRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`;
 
-          return (
-            <g key={`outer-${group.title}-${groupIndex}`}>
-              {/* Outer ring segment */}
-              <path
-                d={createSegmentPath(startAngle, endAngle, outerRingInner, outerRingOuter)}
-                fill={getGroupFill(group, groupIndex)}
-                stroke="rgba(0,0,0,0.2)"
-                strokeWidth="0.1"
-                className="wheel-segment wheel-outer-segment"
-              />
+          // Prepare image position
+          const imageRadius = (imageLayerInner + imageLayerOuter) / 2;
+          const imagePos = calculatePosition(groupMidAngle, imageRadius);
 
-              {/* Define circular path for text */}
+          // Prepare inner ring position
+          const innerTextRadius = (innerRingInner + innerRingOuter) / 2;
+          const innerTextPos = calculatePosition(groupMidAngle, innerTextRadius);
+          const innerTextRotation = calculateInnerRotation(groupMidAngle);
+          const typeLabel = group.type || '';
+
+          // Get times for middle ring
+          const times = Array.isArray(group.times) ? group.times : [];
+          const anglePerTime = times.length > 0 ? (groupEndAngle - groupStartAngle) / times.length : 0;
+
+          return (
+            <g key={`group-${groupIndex}`} {...linkProps}>
+              {/* Define circular path for outer text */}
               <defs>
                 <path id={textPathId} d={textPath} fill="none" />
               </defs>
 
-              {/* Group title text following the arc */}
+              {/* LAYER 1: Outer ring segment */}
+              <path
+                d={createSegmentPath(groupStartAngle, groupEndAngle, outerRingInner, outerRingOuter)}
+                fill={getGroupFill(group, groupIndex)}
+                stroke="rgba(0,0,0,0.2)"
+                strokeWidth="0.1"
+                className="wheel-segment wheel-outer-segment"
+                style={{ pointerEvents: 'all' }}
+              />
+
+              {/* Outer ring text */}
               {group?.title && (
                 <text
                   fill={groupTitleColor}
@@ -303,127 +338,89 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                   textAnchor="middle"
                   dominantBaseline="middle"
                   className="wheel-segment-text"
+                  style={{ pointerEvents: 'all' }}
                 >
                   <textPath href={`#${textPathId}`} startOffset="50%">
                     {group.title.toUpperCase()}
                   </textPath>
                 </text>
               )}
-            </g>
-          );
-        })}
 
-        {/* LAYER 2: Images in dedicated layer */}
-        {groups.map((group, groupIndex) => {
-          if (!group.image) return null;
-
-          const startAngle = groupIndex * anglePerGroup;
-          const endAngle = (groupIndex + 1) * anglePerGroup;
-          const midAngle = (startAngle + endAngle) / 2;
-
-          // Position images in dedicated image layer
-          const imageRadius = (imageLayerInner + imageLayerOuter) / 2;
-          const imagePos = calculatePosition(midAngle, imageRadius);
-
-          return (
-            <image
-              key={`image-${groupIndex}`}
-              href={group.image}
-              x={imagePos.x - 5}
-              y={imagePos.y - 5}
-              width="10"
-              height="10"
-              className="wheel-segment-image"
-              preserveAspectRatio="xMidYMid meet"
-            />
-          );
-        })}
-
-        {/* LAYER 3: Middle ring - Time slices (Morning, Afternoon, Evening, Night) */}
-        {groups.map((group, groupIndex) => {
-          if (!group) return null;
-          const times = Array.isArray(group.times) ? group.times : [];
-          if (times.length === 0) return null;
-
-          const groupStartAngle = groupIndex * anglePerGroup;
-          const groupEndAngle = (groupIndex + 1) * anglePerGroup;
-          const anglePerTime = (groupEndAngle - groupStartAngle) / times.length;
-
-          return times.map((time, timeIndex) => {
-            if (!time) return null;
-            const startAngle = groupStartAngle + timeIndex * anglePerTime;
-            const endAngle = groupStartAngle + (timeIndex + 1) * anglePerTime - gapSizeValue / 10;
-
-            const midAngle = (startAngle + endAngle) / 2;
-            const textRadius = (middleRingInner + middleRingOuter) / 2;
-            const textPos = calculatePosition(midAngle, textRadius);
-            const textRotation = calculateInnerRotation(midAngle);
-
-            return (
-              <g key={`middle-${groupIndex}-${timeIndex}`}>
-                {/* Middle ring segment */}
-                <path
-                  d={createSegmentPath(startAngle, endAngle, middleRingInner, middleRingOuter)}
-                  fill={getGroupFill(group, groupIndex)}
-                  stroke="rgba(0,0,0,0.2)"
-                  strokeWidth="0.1"
-                  className="wheel-segment wheel-middle-segment"
+              {/* LAYER 2: Image */}
+              {group.image && (
+                <image
+                  href={group.image}
+                  x={imagePos.x - 5}
+                  y={imagePos.y - 5}
+                  width="10"
+                  height="10"
+                  className="wheel-segment-image"
+                  preserveAspectRatio="xMidYMid meet"
+                  style={{ pointerEvents: 'all' }}
                 />
+              )}
 
-                {/* Time text */}
-                <text
-                  x={textPos.x}
-                  y={textPos.y}
-                  fill={timeColor}
-                  fontSize="1"
-                  fontWeight="500"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  transform={`rotate(${textRotation}, ${textPos.x}, ${textPos.y})`}
-                  className="wheel-segment-text"
-                >
-                  {typeof time === 'string' ? time.toUpperCase() : time}
-                </text>
-              </g>
-            );
-          });
-        })}
+              {/* LAYER 3: Middle ring - Time slices */}
+              {times.map((time, timeIndex) => {
+                if (!time) return null;
+                const startAngle = groupStartAngle + timeIndex * anglePerTime;
+                const endAngle = groupStartAngle + (timeIndex + 1) * anglePerTime - gapSizeValue / 10;
+                const midAngle = (startAngle + endAngle) / 2;
+                const textRadius = (middleRingInner + middleRingOuter) / 2;
+                const textPos = calculatePosition(midAngle, textRadius);
+                const textRotation = calculateInnerRotation(midAngle);
 
-        {/* LAYER 4: Inner ring - Group types (Heels, Boots, Flats, Sneakers) */}
-        {groups.map((group, groupIndex) => {
-          const startAngle = groupIndex * anglePerGroup;
-          const endAngle = (groupIndex + 1) * anglePerGroup - gapSizeValue / 10;
+                return (
+                  <g key={`time-${groupIndex}-${timeIndex}`}>
+                    <path
+                      d={createSegmentPath(startAngle, endAngle, middleRingInner, middleRingOuter)}
+                      fill={getGroupFill(group, groupIndex)}
+                      stroke="rgba(0,0,0,0.2)"
+                      strokeWidth="0.1"
+                      className="wheel-segment wheel-middle-segment"
+                      style={{ pointerEvents: 'all' }}
+                    />
+                    <text
+                      x={textPos.x}
+                      y={textPos.y}
+                      fill={timeColor}
+                      fontSize="1"
+                      fontWeight="500"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      transform={`rotate(${textRotation}, ${textPos.x}, ${textPos.y})`}
+                      className="wheel-segment-text"
+                      style={{ pointerEvents: 'all' }}
+                    >
+                      {typeof time === 'string' ? time.toUpperCase() : time}
+                    </text>
+                  </g>
+                );
+              })}
 
-          const midAngle = (startAngle + endAngle) / 2;
-          const textRadius = (innerRingInner + innerRingOuter) / 2;
-          const textPos = calculatePosition(midAngle, textRadius);
-          const textRotation = calculateInnerRotation(midAngle);
-
-          const typeLabel = group.type || '';
-
-          return (
-            <g key={`inner-${groupIndex}`}>
-              {/* Inner ring segment - ONE per group */}
+              {/* LAYER 4: Inner ring segment */}
               <path
-                d={createSegmentPath(startAngle, endAngle, innerRingInner, innerRingOuter)}
+                d={createSegmentPath(groupStartAngle, groupEndAngle, innerRingInner, innerRingOuter)}
                 fill={getGroupFill(group, groupIndex)}
                 stroke="rgba(0,0,0,0.2)"
                 strokeWidth="0.1"
                 className="wheel-segment wheel-inner-segment"
+                style={{ pointerEvents: 'all' }}
               />
 
-              {/* Type text - ONE per group */}
+              {/* Inner ring text */}
               {typeLabel && (
                 <text
-                  x={textPos.x}
-                  y={textPos.y}
+                  x={innerTextPos.x}
+                  y={innerTextPos.y}
                   fill={timeColor}
                   fontSize="1.2"
                   fontWeight="400"
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  transform={`rotate(${textRotation}, ${textPos.x}, ${textPos.y})`}
+                  transform={`rotate(${innerTextRotation}, ${innerTextPos.x}, ${innerTextPos.y})`}
                   className="wheel-inner-segment-text"
+                  style={{ pointerEvents: 'all' }}
                 >
                   {typeLabel.toUpperCase()}
                 </text>
