@@ -142,6 +142,18 @@ class Circular_Wheel_Widget extends Base_Widget {
             ]
         );
 
+        $groups_repeater->add_control(
+            'preview_image',
+            [
+                'label' => __('Preview Image', 'philosofeet-core'),
+                'type' => Controls_Manager::MEDIA,
+                'default' => [
+                    'url' => '',
+                ],
+                'description' => __('Image to show in modal preview', 'philosofeet-core'),
+            ]
+        );
+
         // Times nested repeater
         $groups_repeater->add_control(
             'times',
@@ -557,6 +569,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                     'background' => $background,
                     'image' => !empty($group['group_image']['url']) ? $group['group_image']['url'] : '',
                     'link' => $link,
+                    'previewImage' => !empty($group['preview_image']['url']) ? $group['preview_image']['url'] : '',
                     'times' => $times,
                 ];
             }

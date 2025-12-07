@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import Modal from '../common/Modal';
 
 /**
  * Circular Wheel Widget Component
@@ -11,6 +12,13 @@ import React from 'react';
  * 5. Center circle: Icon/Logo
  */
 const CircularWheelWidget = ({ widgetId, settings }) => {
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    url: '',
+    title: '',
+    previewImage: '',
+  });
+  const hoverTimerRef = useRef(null);
   const {
     groups = [],
     centerIcon = '',
@@ -25,6 +33,65 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
     groupImageSize = { size: 60, unit: 'px' },
     centerIconSize = { size: 80, unit: 'px' },
   } = settings;
+
+  /**
+   * Open modal with group link
+   */
+  const openModal = useCallback((url, title, previewImage) => {
+    if (url) {
+      setModalState({
+        isOpen: true,
+        url,
+        title,
+        previewImage,
+      });
+    }
+  }, []);
+
+  /**
+   * Close modal
+   */
+  const closeModal = useCallback(() => {
+    setModalState({ isOpen: false, url: '', title: '', previewImage: '' });
+  }, []);
+
+  /**
+   * Clear hover timer
+   */
+  const clearHoverTimer = useCallback(() => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+  }, []);
+
+  /**
+   * Handle mouse enter on group - start 2-second timer
+   */
+  const handleGroupMouseEnter = useCallback((url, title, previewImage) => {
+    if (!url) return;
+
+    clearHoverTimer();
+    hoverTimerRef.current = setTimeout(() => {
+      openModal(url, title, previewImage);
+    }, 2000); // 2 seconds
+  }, [openModal, clearHoverTimer]);
+
+  /**
+   * Handle mouse leave on group - cancel timer
+   */
+  const handleGroupMouseLeave = useCallback(() => {
+    clearHoverTimer();
+  }, [clearHoverTimer]);
+
+  /**
+   * Handle click on group - open modal immediately
+   */
+  const handleGroupClick = useCallback((e, url, title, previewImage) => {
+    e.preventDefault();
+    clearHoverTimer();
+    openModal(url, title, previewImage);
+  }, [openModal, clearHoverTimer]);
 
   // Calculate dimensions matching the reference image
   const wheelSizeValue = `${wheelSize.size}${wheelSize.unit}`;
@@ -263,19 +330,11 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           const hasLink = group.link && group.link.url;
           const linkProps = hasLink
             ? {
-                onClick: (e) => {
-                  if (group.link.url) {
-                    if (group.link.is_external) {
-                      window.open(
-                        group.link.url,
-                        '_blank',
-                        group.link.nofollow ? 'noopener noreferrer nofollow' : 'noopener noreferrer',
-                      );
-                    } else {
-                      window.location.href = group.link.url;
-                    }
-                  }
-                },
+                onClick: (e) =>
+                  handleGroupClick(e, group.link.url, group.title || 'Preview', group.previewImage),
+                onMouseEnter: () =>
+                  handleGroupMouseEnter(group.link.url, group.title || 'Preview', group.previewImage),
+                onMouseLeave: handleGroupMouseLeave,
                 style: { cursor: 'pointer' },
                 className: 'wheel-segment-group wheel-segment-clickable',
               }
@@ -466,6 +525,15 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           </text>
         ) : null}
       </svg>
+
+      {/* Modal for link preview */}
+      <Modal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        url={modalState.url}
+        title={modalState.title}
+        previewImage={modalState.previewImage}
+      />
     </div>
   );
 };

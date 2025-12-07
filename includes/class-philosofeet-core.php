@@ -213,6 +213,14 @@ final class PhilosofeetCORE {
                 return $tag;
             }, 10, 2);
         }
+
+        // Enqueue modal CSS
+        wp_enqueue_style(
+            'philosofeet-modal',
+            PHILOSOFEET_CORE_ASSETS_URL . 'css/modal.css',
+            [],
+            PHILOSOFEET_CORE_VERSION
+        );
     }
 
     /**

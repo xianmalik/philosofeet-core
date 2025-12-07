@@ -1,0 +1,244 @@
+/**
+ * Modal Styles
+ *
+ * Styling for the embedded link preview modal
+ */
+
+/* Wheel segment hover effects */
+.wheel-segment-clickable {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.wheel-segment-clickable:hover {
+  opacity: 0.9;
+  filter: brightness(1.1);
+}
+
+/* Backdrop */
+.philosofeet-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.philosofeet-modal-container {
+  background: #ffffff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 1200px;
+  height: 90vh;
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Header */
+.philosofeet-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  min-height: 44px;
+}
+
+.philosofeet-modal-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 80px);
+}
+
+.philosofeet-modal-actions {
+  display: flex;
+  gap: 20px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+/* Modal Buttons - Reset all Elementor/theme styles */
+.philosofeet-modal-btn {
+  /* Reset background */
+  background: none !important;
+  background-color: transparent !important;
+
+  /* Reset border */
+  border: none !important;
+  border-style: none !important;
+  border-radius: 0 !important;
+
+  /* Reset spacing */
+  padding: 0 !important;
+  margin: 0 !important;
+
+  /* Reset typography */
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: normal !important;
+  text-transform: none !important;
+  line-height: 1 !important;
+  color: inherit !important;
+
+  /* Set our styles */
+  cursor: pointer;
+  display: flex !important;
+  align-items: center;
+  width: auto;
+  height: auto;
+
+  /* Remove any box model interference */
+  box-sizing: content-box !important;
+  outline: none;
+  box-shadow: none !important;
+
+  /* Remove any transforms or transitions */
+  transform: none !important;
+  transition: none !important;
+}
+
+.philosofeet-modal-btn svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  stroke: #000;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* Open button with text */
+.philosofeet-modal-btn-open {
+  gap: 8px;
+}
+
+.philosofeet-modal-btn-open svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.philosofeet-modal-btn-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+  white-space: nowrap;
+}
+
+.philosofeet-modal-btn:hover,
+.philosofeet-modal-btn:focus,
+.philosofeet-modal-btn:active {
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  transform: none !important;
+  outline: none !important;
+}
+
+/* Modal Content */
+.philosofeet-modal-content {
+  flex: 1;
+  overflow: hidden;
+  background: #f5f5f5;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.philosofeet-modal-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  border-radius: 0 !important;
+}
+
+.philosofeet-modal-placeholder {
+  text-align: center;
+  color: #999;
+  padding: 40px;
+}
+
+.philosofeet-modal-placeholder p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .philosofeet-modal-backdrop {
+    padding: 0;
+  }
+
+  .philosofeet-modal-container {
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .philosofeet-modal-header {
+    padding: 8px 12px;
+    min-height: 40px;
+  }
+
+  .philosofeet-modal-title {
+    font-size: 13px;
+  }
+
+  .philosofeet-modal-actions {
+    gap: 10px;
+  }
+
+  .philosofeet-modal-btn-open {
+    gap: 6px;
+  }
+
+  .philosofeet-modal-btn-open svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .philosofeet-modal-btn-text {
+    font-size: 12px;
+  }
+}
