@@ -192,6 +192,13 @@
   border-radius: 0 !important;
 }
 
+.philosofeet-modal-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
 .philosofeet-modal-placeholder {
   text-align: center;
   color: #999;

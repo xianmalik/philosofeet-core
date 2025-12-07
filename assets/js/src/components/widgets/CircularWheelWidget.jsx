@@ -66,7 +66,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   }, []);
 
   /**
-   * Handle mouse enter on group - start 2-second timer
+   * Handle mouse enter on group - start 1-second timer
    */
   const handleGroupMouseEnter = useCallback((url, title, previewImage) => {
     if (!url) return;
@@ -74,7 +74,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
     clearHoverTimer();
     hoverTimerRef.current = setTimeout(() => {
       openModal(url, title, previewImage);
-    }, 2000); // 2 seconds
+    }, 1000); // 1 second
   }, [openModal, clearHoverTimer]);
 
   /**
