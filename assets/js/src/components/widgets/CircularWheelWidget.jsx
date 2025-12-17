@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import Modal from '../common/Modal';
+import Popup from '../common/Popup';
 
 /**
  * Circular Wheel Widget Component
@@ -12,13 +12,18 @@ import Modal from '../common/Modal';
  * 5. Center circle: Icon/Logo
  */
 const CircularWheelWidget = ({ widgetId, settings }) => {
-  const [modalState, setModalState] = useState({
+  const [popupState, setPopupState] = useState({
     isOpen: false,
     url: '',
     title: '',
-    previewImage: '',
+    description: '',
+    image: '',
+    isExternal: false,
+    nofollow: false,
+    position: { x: 0, y: 0 },
   });
   const hoverTimerRef = useRef(null);
+  const wheelRef = useRef(null);
   const {
     groups = [],
     centerIcon = '',
@@ -35,24 +40,64 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   } = settings;
 
   /**
-   * Open modal with group link
+   * Calculate position relative to wheel center (from SVG coordinates)
    */
-  const openModal = useCallback((url, title, previewImage) => {
-    if (url) {
-      setModalState({
-        isOpen: true,
-        url,
-        title,
-        previewImage,
-      });
-    }
+  const calculatePopupPosition = useCallback((svgX, svgY) => {
+    if (!wheelRef.current) return { x: 0, y: 0 };
+
+    const wheelRect = wheelRef.current.getBoundingClientRect();
+    const svg = wheelRef.current.querySelector('.wheel-svg');
+    if (!svg) return { x: 0, y: 0 };
+
+    const svgRect = svg.getBoundingClientRect();
+
+    // Convert SVG coordinates (0-100) to pixel coordinates
+    const pixelX = (svgX / 100) * svgRect.width;
+    const pixelY = (svgY / 100) * svgRect.height;
+
+    // Position popup to the right of the image
+    return {
+      x: pixelX + 20,
+      y: pixelY - 70, // Center vertically around the image
+    };
   }, []);
 
   /**
-   * Close modal
+   * Open popup with group info
    */
-  const closeModal = useCallback(() => {
-    setModalState({ isOpen: false, url: '', title: '', previewImage: '' });
+  const openPopup = useCallback(
+    (url, title, description, image, isExternal, nofollow, svgX, svgY) => {
+      if (url) {
+        const position = calculatePopupPosition(svgX, svgY);
+        setPopupState({
+          isOpen: true,
+          url,
+          title,
+          description,
+          image,
+          isExternal,
+          nofollow,
+          position,
+        });
+      }
+    },
+    [calculatePopupPosition]
+  );
+
+  /**
+   * Close popup
+   */
+  const closePopup = useCallback(() => {
+    setPopupState({
+      isOpen: false,
+      url: '',
+      title: '',
+      description: '',
+      image: '',
+      isExternal: false,
+      nofollow: false,
+      position: { x: 0, y: 0 },
+    });
   }, []);
 
   /**
@@ -68,14 +113,17 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   /**
    * Handle mouse enter on group - start 1-second timer
    */
-  const handleGroupMouseEnter = useCallback((url, title, previewImage) => {
-    if (!url) return;
+  const handleGroupMouseEnter = useCallback(
+    (url, title, description, image, isExternal, nofollow, svgX, svgY) => {
+      if (!url) return;
 
-    clearHoverTimer();
-    hoverTimerRef.current = setTimeout(() => {
-      openModal(url, title, previewImage);
-    }, 1000); // 1 second
-  }, [openModal, clearHoverTimer]);
+      clearHoverTimer();
+      hoverTimerRef.current = setTimeout(() => {
+        openPopup(url, title, description, image, isExternal, nofollow, svgX, svgY);
+      }, 1000); // 1 second
+    },
+    [openPopup, clearHoverTimer]
+  );
 
   /**
    * Handle mouse leave on group - cancel timer
@@ -85,13 +133,16 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   }, [clearHoverTimer]);
 
   /**
-   * Handle click on group - open modal immediately
+   * Handle click on group - open popup immediately
    */
-  const handleGroupClick = useCallback((e, url, title, previewImage) => {
-    e.preventDefault();
-    clearHoverTimer();
-    openModal(url, title, previewImage);
-  }, [openModal, clearHoverTimer]);
+  const handleGroupClick = useCallback(
+    (e, url, title, description, image, isExternal, nofollow, svgX, svgY) => {
+      e.preventDefault();
+      clearHoverTimer();
+      openPopup(url, title, description, image, isExternal, nofollow, svgX, svgY);
+    },
+    [openPopup, clearHoverTimer]
+  );
 
   // Calculate dimensions matching the reference image
   const wheelSizeValue = `${wheelSize.size}${wheelSize.unit}`;
@@ -224,8 +275,9 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   // Render the wheel
   return (
     <div
+      ref={wheelRef}
       className="philosofeet-circular-wheel"
-      style={{ width: wheelSizeValue, height: wheelSizeValue }}
+      style={{ width: wheelSizeValue, height: wheelSizeValue, position: 'relative' }}
     >
       <svg viewBox="0 0 100 100" className="wheel-svg" style={{ width: '100%', height: '100%' }}>
         {/* Define filters and gradients */}
@@ -326,14 +378,37 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           const groupEndAngle = (groupIndex + 1) * anglePerGroup - gapSizeValue / 10;
           const groupMidAngle = (groupStartAngle + groupEndAngle) / 2;
 
+          // Prepare image position (needed for popup positioning)
+          const imageRadius = (imageLayerInner + imageLayerOuter) / 2;
+          const imagePos = calculatePosition(groupMidAngle, imageRadius);
+
           // Check if group has a link
           const hasLink = group.link && group.link.url;
           const linkProps = hasLink
             ? {
                 onClick: (e) =>
-                  handleGroupClick(e, group.link.url, group.title || 'Preview', group.previewImage),
+                  handleGroupClick(
+                    e,
+                    group.link.url,
+                    group.type || '',
+                    group.description || '',
+                    group.image || '',
+                    group.link.is_external || false,
+                    group.link.nofollow || false,
+                    imagePos.x,
+                    imagePos.y
+                  ),
                 onMouseEnter: () =>
-                  handleGroupMouseEnter(group.link.url, group.title || 'Preview', group.previewImage),
+                  handleGroupMouseEnter(
+                    group.link.url,
+                    group.type || '',
+                    group.description || '',
+                    group.image || '',
+                    group.link.is_external || false,
+                    group.link.nofollow || false,
+                    imagePos.x,
+                    imagePos.y
+                  ),
                 onMouseLeave: handleGroupMouseLeave,
                 style: { cursor: 'pointer' },
                 className: 'wheel-segment-group wheel-segment-clickable',
@@ -356,10 +431,6 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           const textPath = isBottomHalf
             ? `M ${x2} ${y2} A ${textRadius} ${textRadius} 0 ${largeArcFlag} 0 ${x1} ${y1}`
             : `M ${x1} ${y1} A ${textRadius} ${textRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`;
-
-          // Prepare image position
-          const imageRadius = (imageLayerInner + imageLayerOuter) / 2;
-          const imagePos = calculatePosition(groupMidAngle, imageRadius);
 
           // Prepare inner ring position
           const innerTextRadius = (innerRingInner + innerRingOuter) / 2;
@@ -526,13 +597,17 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
         ) : null}
       </svg>
 
-      {/* Modal for link preview */}
-      <Modal
-        isOpen={modalState.isOpen}
-        onClose={closeModal}
-        url={modalState.url}
-        title={modalState.title}
-        previewImage={modalState.previewImage}
+      {/* Popup for link preview */}
+      <Popup
+        isOpen={popupState.isOpen}
+        onClose={closePopup}
+        url={popupState.url}
+        title={popupState.title}
+        description={popupState.description}
+        image={popupState.image}
+        isExternal={popupState.isExternal}
+        nofollow={popupState.nofollow}
+        position={popupState.position}
       />
     </div>
   );

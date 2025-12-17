@@ -143,14 +143,13 @@ class Circular_Wheel_Widget extends Base_Widget {
         );
 
         $groups_repeater->add_control(
-            'preview_image',
+            'group_description',
             [
-                'label' => __('Preview Image', 'philosofeet-core'),
-                'type' => Controls_Manager::MEDIA,
-                'default' => [
-                    'url' => '',
-                ],
-                'description' => __('Image to show in modal preview', 'philosofeet-core'),
+                'label' => __('Description', 'philosofeet-core'),
+                'type' => Controls_Manager::TEXTAREA,
+                'default' => '',
+                'placeholder' => __('Enter a short description', 'philosofeet-core'),
+                'description' => __('Short description to show in popup', 'philosofeet-core'),
             ]
         );
 
@@ -569,7 +568,7 @@ class Circular_Wheel_Widget extends Base_Widget {
                     'background' => $background,
                     'image' => !empty($group['group_image']['url']) ? $group['group_image']['url'] : '',
                     'link' => $link,
-                    'previewImage' => !empty($group['preview_image']['url']) ? $group['preview_image']['url'] : '',
+                    'description' => !empty($group['group_description']) ? $group['group_description'] : '',
                     'times' => $times,
                 ];
             }
