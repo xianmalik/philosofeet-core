@@ -514,6 +514,44 @@ class Circular_Wheel_Widget extends Base_Widget {
         );
 
         $this->end_controls_section();
+
+        // Style Section - Popup
+        $this->start_controls_section(
+            'popup_style_section',
+            [
+                'label' => __('Popup', 'philosofeet-core'),
+                'tab' => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'popup_title_typography',
+                'label' => __('Title Typography', 'philosofeet-core'),
+                'selector' => '{{WRAPPER}} .philosofeet-popup-title',
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'popup_description_typography',
+                'label' => __('Description Typography', 'philosofeet-core'),
+                'selector' => '{{WRAPPER}} .philosofeet-popup-description',
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'popup_button_typography',
+                'label' => __('Button Typography', 'philosofeet-core'),
+                'selector' => '{{WRAPPER}} .philosofeet-popup-link-btn',
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
     /**

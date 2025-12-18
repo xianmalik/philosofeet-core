@@ -277,8 +277,36 @@
   flex-direction: column;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
   animation: tooltipFadeIn 0.15s ease-out;
-  overflow: hidden;
+  overflow: visible;
   pointer-events: all;
+}
+
+/* Triangle pointer (shadow) */
+.philosofeet-popup-container::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 8px 8px 0;
+  border-color: transparent rgba(0, 0, 0, 0.1) transparent transparent;
+}
+
+/* Triangle pointer (white fill) */
+.philosofeet-popup-container::after {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 7px 7px 7px 0;
+  border-color: transparent #ffffff transparent transparent;
 }
 
 @keyframes tooltipFadeIn {
@@ -312,7 +340,7 @@
   outline: none;
   box-shadow: none !important;
   transform: none !important;
-  transition: none !important;
+  transition: opacity 0.2s ease !important;
 
   /* Custom styles */
   position: absolute;
@@ -325,8 +353,7 @@
   align-items: center;
   justify-content: center;
   z-index: 10;
-  background-color: rgba(0, 0, 0, 0.05) !important;
-  border-radius: 50% !important;
+  opacity: 0.6;
 }
 
 .philosofeet-popup-close svg {
@@ -337,14 +364,15 @@
 }
 
 .philosofeet-popup-close:hover {
-  background-color: rgba(0, 0, 0, 0.1) !important;
+  opacity: 1;
 }
 
 /* Popup Content - Two Column Layout */
 .philosofeet-popup-content {
   display: flex;
   flex-direction: row;
-  min-height: 140px;
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 /* Left Side: Image */

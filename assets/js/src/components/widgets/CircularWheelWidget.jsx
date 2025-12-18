@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Popup from '../common/Popup';
 
 /**
@@ -22,7 +22,6 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
     nofollow: false,
     position: { x: 0, y: 0 },
   });
-  const hoverTimerRef = useRef(null);
   const wheelRef = useRef(null);
   const {
     groups = [],
@@ -101,48 +100,35 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
   }, []);
 
   /**
-   * Clear hover timer
-   */
-  const clearHoverTimer = useCallback(() => {
-    if (hoverTimerRef.current) {
-      clearTimeout(hoverTimerRef.current);
-      hoverTimerRef.current = null;
-    }
-  }, []);
-
-  /**
-   * Handle mouse enter on group - start 1-second timer
-   */
-  const handleGroupMouseEnter = useCallback(
-    (url, title, description, image, isExternal, nofollow, svgX, svgY) => {
-      if (!url) return;
-
-      clearHoverTimer();
-      hoverTimerRef.current = setTimeout(() => {
-        openPopup(url, title, description, image, isExternal, nofollow, svgX, svgY);
-      }, 1000); // 1 second
-    },
-    [openPopup, clearHoverTimer]
-  );
-
-  /**
-   * Handle mouse leave on group - cancel timer
-   */
-  const handleGroupMouseLeave = useCallback(() => {
-    clearHoverTimer();
-  }, [clearHoverTimer]);
-
-  /**
-   * Handle click on group - open popup immediately
+   * Handle click on group - open popup
    */
   const handleGroupClick = useCallback(
     (e, url, title, description, image, isExternal, nofollow, svgX, svgY) => {
       e.preventDefault();
-      clearHoverTimer();
+      e.stopPropagation();
       openPopup(url, title, description, image, isExternal, nofollow, svgX, svgY);
     },
-    [openPopup, clearHoverTimer]
+    [openPopup]
   );
+
+  /**
+   * Close popup when clicking outside
+   */
+  useEffect(() => {
+    if (!popupState.isOpen) return;
+
+    const handleClickOutside = (e) => {
+      // Check if click is outside the wheel container
+      if (wheelRef.current && !wheelRef.current.contains(e.target)) {
+        closePopup();
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [popupState.isOpen, closePopup]);
 
   // Calculate dimensions matching the reference image
   const wheelSizeValue = `${wheelSize.size}${wheelSize.unit}`;
@@ -398,18 +384,6 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
                     imagePos.x,
                     imagePos.y
                   ),
-                onMouseEnter: () =>
-                  handleGroupMouseEnter(
-                    group.link.url,
-                    group.type || '',
-                    group.description || '',
-                    group.image || '',
-                    group.link.is_external || false,
-                    group.link.nofollow || false,
-                    imagePos.x,
-                    imagePos.y
-                  ),
-                onMouseLeave: handleGroupMouseLeave,
                 style: { cursor: 'pointer' },
                 className: 'wheel-segment-group wheel-segment-clickable',
               }

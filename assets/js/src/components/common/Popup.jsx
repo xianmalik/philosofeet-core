@@ -96,7 +96,7 @@ const Popup = ({ isOpen, onClose, url, title, description, image, isExternal, no
                 className="philosofeet-popup-link-btn"
                 onClick={handleLinkClick}
               >
-                View More
+                Where to Buy
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
