@@ -118,6 +118,7 @@ final class PhilosofeetCORE {
      */
     private function includes() {
         require_once PHILOSOFEET_CORE_PATH . 'includes/class-widget-manager.php';
+        require_once PHILOSOFEET_CORE_PATH . 'includes/class-polling-system.php';
     }
 
     /**
@@ -161,7 +162,8 @@ final class PhilosofeetCORE {
             // Add global config before enqueuing
             wp_localize_script('philosofeet-core-react', 'philosofeetCore', [
                 'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('philosofeet_core_nonce'),
+                'restUrl' => get_rest_url(),
+                'nonce' => wp_create_nonce('wp_rest'),
                 'assetsUrl' => PHILOSOFEET_CORE_ASSETS_URL,
                 'isDev' => true,
             ]);
@@ -198,7 +200,8 @@ final class PhilosofeetCORE {
             // Pass global config to React
             wp_localize_script('philosofeet-core-react', 'philosofeetCore', [
                 'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('philosofeet_core_nonce'),
+                'restUrl' => get_rest_url(),
+                'nonce' => wp_create_nonce('wp_rest'),
                 'assetsUrl' => PHILOSOFEET_CORE_ASSETS_URL,
                 'isDev' => false,
             ]);

@@ -38,6 +38,7 @@ class Widget_Manager {
         $content_slider_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/content-slider-widget.php';
         $nested_slider_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/nested-slider-widget.php';
         $image_hover_swap_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/image-hover-swap-widget.php';
+        $polling_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/polling-widget.php';
 
         if (file_exists($base_widget)) {
             require_once $base_widget;
@@ -73,6 +74,10 @@ class Widget_Manager {
 
         if (file_exists($image_hover_swap_widget)) {
             require_once $image_hover_swap_widget;
+        }
+
+        if (file_exists($polling_widget)) {
+            require_once $polling_widget;
         }
     }
 
@@ -117,6 +122,11 @@ class Widget_Manager {
 
         if (class_exists('Philosofeet\Widgets\Image_Hover_Swap_Widget')) {
             $widget = new Widgets\Image_Hover_Swap_Widget();
+            $widgets_manager->register($widget);
+        }
+
+        if (class_exists('Philosofeet\Widgets\Polling_Widget')) {
+            $widget = new Widgets\Polling_Widget();
             $widgets_manager->register($widget);
         }
     }

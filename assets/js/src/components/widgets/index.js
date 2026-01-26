@@ -10,6 +10,7 @@ import ContentSlider from './ContentSlider';
 import DrawerNavMenu from './DrawerNavMenu';
 import ImageHoverSwap from './ImageHoverSwap';
 import ImageSwap from './ImageSwap';
+import PollingWidget from './PollingWidget';
 import RSSFeedCarousel from './RSSFeedCarousel';
 import StickyImage from './StickyImage';
 
@@ -21,6 +22,7 @@ const widgetComponents = {
   'sticky-image': StickyImage,
   'content-slider': ContentSlider,
   'image-hover-swap': ImageHoverSwap,
+  'polling': PollingWidget,
 };
 
 export default widgetComponents;
