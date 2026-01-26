@@ -8,6 +8,7 @@
 import CircularWheelWidget from './CircularWheelWidget';
 import ContentSlider from './ContentSlider';
 import DrawerNavMenu from './DrawerNavMenu';
+import ImageHoverSwap from './ImageHoverSwap';
 import ImageSwap from './ImageSwap';
 import RSSFeedCarousel from './RSSFeedCarousel';
 import StickyImage from './StickyImage';
@@ -19,6 +20,7 @@ const widgetComponents = {
   'rss-feed-carousel': RSSFeedCarousel,
   'sticky-image': StickyImage,
   'content-slider': ContentSlider,
+  'image-hover-swap': ImageHoverSwap,
 };
 
 export default widgetComponents;

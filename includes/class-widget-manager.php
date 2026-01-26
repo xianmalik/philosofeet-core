@@ -35,7 +35,9 @@ class Widget_Manager {
         $image_swap_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/image-swap-widget.php';
         $sticky_image_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/sticky-image-widget.php';
         $content_slider_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/content-slider-widget.php';
+        $content_slider_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/content-slider-widget.php';
         $nested_slider_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/nested-slider-widget.php';
+        $image_hover_swap_widget = PHILOSOFEET_CORE_PATH . 'includes/widgets/image-hover-swap-widget.php';
 
         if (file_exists($base_widget)) {
             require_once $base_widget;
@@ -67,6 +69,10 @@ class Widget_Manager {
 
         if (file_exists($nested_slider_widget)) {
             require_once $nested_slider_widget;
+        }
+
+        if (file_exists($image_hover_swap_widget)) {
+            require_once $image_hover_swap_widget;
         }
     }
 
@@ -106,6 +112,11 @@ class Widget_Manager {
 
         if (class_exists('Philosofeet\Widgets\Nested_Slider_Widget')) {
             $widget = new Widgets\Nested_Slider_Widget();
+            $widgets_manager->register($widget);
+        }
+
+        if (class_exists('Philosofeet\Widgets\Image_Hover_Swap_Widget')) {
+            $widget = new Widgets\Image_Hover_Swap_Widget();
             $widgets_manager->register($widget);
         }
     }

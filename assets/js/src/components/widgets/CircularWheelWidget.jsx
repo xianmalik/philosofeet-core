@@ -369,7 +369,7 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
           const imagePos = calculatePosition(groupMidAngle, imageRadius);
 
           // Check if group has a link
-          const hasLink = group.link && group.link.url;
+          const hasLink = group.link?.url;
           const linkProps = hasLink
             ? {
                 onClick: (e) =>
@@ -414,7 +414,8 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
 
           // Get times for middle ring
           const times = Array.isArray(group.times) ? group.times : [];
-          const anglePerTime = times.length > 0 ? (groupEndAngle - groupStartAngle) / times.length : 0;
+          const anglePerTime =
+            times.length > 0 ? (groupEndAngle - groupStartAngle) / times.length : 0;
 
           return (
             <g key={`group-${groupIndex}`} {...linkProps}>
@@ -425,7 +426,12 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
 
               {/* LAYER 1: Outer ring segment */}
               <path
-                d={createSegmentPath(groupStartAngle, groupEndAngle, outerRingInner, outerRingOuter)}
+                d={createSegmentPath(
+                  groupStartAngle,
+                  groupEndAngle,
+                  outerRingInner,
+                  outerRingOuter
+                )}
                 fill={getGroupFill(group, groupIndex)}
                 stroke="rgba(0,0,0,0.2)"
                 strokeWidth="0.1"
@@ -468,7 +474,8 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
               {times.map((time, timeIndex) => {
                 if (!time) return null;
                 const startAngle = groupStartAngle + timeIndex * anglePerTime;
-                const endAngle = groupStartAngle + (timeIndex + 1) * anglePerTime - gapSizeValue / 10;
+                const endAngle =
+                  groupStartAngle + (timeIndex + 1) * anglePerTime - gapSizeValue / 10;
                 const midAngle = (startAngle + endAngle) / 2;
                 const textRadius = (middleRingInner + middleRingOuter) / 2;
                 const textPos = calculatePosition(midAngle, textRadius);
@@ -504,7 +511,12 @@ const CircularWheelWidget = ({ widgetId, settings }) => {
 
               {/* LAYER 4: Inner ring segment */}
               <path
-                d={createSegmentPath(groupStartAngle, groupEndAngle, innerRingInner, innerRingOuter)}
+                d={createSegmentPath(
+                  groupStartAngle,
+                  groupEndAngle,
+                  innerRingInner,
+                  innerRingOuter
+                )}
                 fill={getGroupFill(group, groupIndex)}
                 stroke="rgba(0,0,0,0.2)"
                 strokeWidth="0.1"

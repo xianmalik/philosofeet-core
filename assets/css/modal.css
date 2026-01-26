@@ -283,7 +283,7 @@
 
 /* Triangle pointer (shadow) */
 .philosofeet-popup-container::before {
-  content: '';
+  content: "";
   position: absolute;
   left: -8px;
   top: 50%;
@@ -297,7 +297,7 @@
 
 /* Triangle pointer (white fill) */
 .philosofeet-popup-container::after {
-  content: '';
+  content: "";
   position: absolute;
   left: -6px;
   top: 50%;

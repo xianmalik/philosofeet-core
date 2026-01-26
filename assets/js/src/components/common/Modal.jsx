@@ -42,11 +42,8 @@ const Modal = ({ isOpen, onClose, url, title, previewImage }) => {
   if (!isOpen) return null;
 
   return (
-    <div
-      ref={modalRef}
-      className="philosofeet-modal-backdrop"
-      onClick={handleBackdropClick}
-    >
+    // biome-ignore lint/a11y/useKeyWithClickEvents: Modal backdrop needs to be clickable
+    <div ref={modalRef} className="philosofeet-modal-backdrop" onClick={handleBackdropClick}>
       <div className="philosofeet-modal-container">
         {/* Modal Header */}
         <div className="philosofeet-modal-header">
@@ -98,11 +95,7 @@ const Modal = ({ isOpen, onClose, url, title, previewImage }) => {
         {/* Modal Content - Preview Image */}
         <div className="philosofeet-modal-content">
           {previewImage ? (
-            <img
-              src={previewImage}
-              alt={title || 'Preview'}
-              className="philosofeet-modal-image"
-            />
+            <img src={previewImage} alt={title || 'Preview'} className="philosofeet-modal-image" />
           ) : (
             <div className="philosofeet-modal-placeholder">
               <p>No preview image available</p>

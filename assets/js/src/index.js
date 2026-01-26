@@ -117,6 +117,59 @@ function prepareWidgetData(settings) {
     });
   }
 
+  // Process images data (for Image Hover Swap)
+  let images = [];
+  if (settings.images && Array.isArray(settings.images.models)) {
+    // Backbone collection with models
+    images = settings.images.models.map((model) => {
+      const attrs = model.attributes;
+      return {
+        id: model.id || attrs._id,
+        url: attrs.stack_image?.url || '',
+        x: Number.parseFloat(attrs.x_offset) || 0,
+        y: Number.parseFloat(attrs.y_offset) || 0,
+        rotation: attrs.rotation?.size !== undefined ? Number.parseFloat(attrs.rotation.size) : 0,
+        width:
+          attrs.custom_width?.size !== undefined ? Number.parseFloat(attrs.custom_width.size) : 200,
+      };
+    });
+  } else if (settings.images && typeof settings.images === 'object' && settings.images.models) {
+    // Alternative Backbone collection structure
+    try {
+      const imageModels = Object.values(settings.images.models);
+      images = imageModels.map((model) => {
+        const attrs = model.attributes || model;
+        return {
+          id: model.id || attrs._id,
+          url: attrs.stack_image?.url || '',
+          x: Number.parseFloat(attrs.x_offset) || 0,
+          y: Number.parseFloat(attrs.y_offset) || 0,
+          rotation: attrs.rotation?.size !== undefined ? Number.parseFloat(attrs.rotation.size) : 0,
+          width:
+            attrs.custom_width?.size !== undefined
+              ? Number.parseFloat(attrs.custom_width.size)
+              : 200,
+        };
+      });
+    } catch (e) {
+      console.warn('[Philosofeet] Error processing images from Backbone models:', e);
+      images = [];
+    }
+  } else if (Array.isArray(settings.images)) {
+    // Plain array (fallback)
+    images = settings.images.map((item) => {
+      return {
+        id: item._id,
+        url: item.stack_image?.url || '',
+        x: Number.parseFloat(item.x_offset) || 0,
+        y: Number.parseFloat(item.y_offset) || 0,
+        rotation: item.rotation?.size !== undefined ? Number.parseFloat(item.rotation.size) : 0,
+        width:
+          item.custom_width?.size !== undefined ? Number.parseFloat(item.custom_width.size) : 200,
+      };
+    });
+  }
+
   return {
     groups: groups,
     centerIcon: settings.center_icon?.url || '',
@@ -130,6 +183,8 @@ function prepareWidgetData(settings) {
     timeColor: settings.time_color || '#ffffff',
     groupImageSize: settings.group_image_size || { size: 60, unit: 'px' },
     centerIconSize: settings.center_icon_size || { size: 80, unit: 'px' },
+    images: images,
+    transitionDuration: settings.transition_duration?.size || 300,
   };
 }
 

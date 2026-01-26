@@ -5,7 +5,17 @@ import React, { useEffect, useRef } from 'react';
  *
  * Displays a tooltip-style popup with image on left, title/description/link on right
  */
-const Popup = ({ isOpen, onClose, url, title, description, image, isExternal, nofollow, position }) => {
+const Popup = ({
+  isOpen,
+  onClose,
+  url,
+  title,
+  description,
+  image,
+  isExternal,
+  nofollow,
+  position,
+}) => {
   const popupRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -41,7 +51,11 @@ const Popup = ({ isOpen, onClose, url, title, description, image, isExternal, no
   const handleLinkClick = () => {
     if (url) {
       if (isExternal) {
-        window.open(url, '_blank', nofollow ? 'noopener noreferrer nofollow' : 'noopener noreferrer');
+        window.open(
+          url,
+          '_blank',
+          nofollow ? 'noopener noreferrer nofollow' : 'noopener noreferrer'
+        );
       } else {
         window.location.href = url;
       }
@@ -78,11 +92,7 @@ const Popup = ({ isOpen, onClose, url, title, description, image, isExternal, no
           {/* Left side: Image */}
           {image && (
             <div className="philosofeet-popup-image-container">
-              <img
-                src={image}
-                alt={title || 'Preview'}
-                className="philosofeet-popup-image"
-              />
+              <img src={image} alt={title || 'Preview'} className="philosofeet-popup-image" />
             </div>
           )}
 
