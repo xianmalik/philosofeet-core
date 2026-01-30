@@ -111,7 +111,9 @@ const PollingWidget = ({ settings }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px'
+                gap: '8px',
+                backgroundColor: voted && isSelected ? '#ffffff' : undefined,
+                color: voted && isSelected ? '#000000' : undefined
               }}
             >
               {/* Checkmark icon for selected option */}
