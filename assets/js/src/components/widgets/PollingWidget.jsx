@@ -7,6 +7,7 @@ const PollingWidget = ({ settings }) => {
   const [voted, setVoted] = useState(false);
   const [error, setError] = useState(null);
   const [voting, setVoting] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
     if (!pollId) {
@@ -36,6 +37,7 @@ const PollingWidget = ({ settings }) => {
   const handleVote = async (index) => {
     if (voting || voted) return;
     setVoting(true);
+    setSelectedOption(index);
 
     try {
       const response = await fetch(`${window.philosofeetCore.restUrl}philosofeet/v1/vote`, {
@@ -95,50 +97,42 @@ const PollingWidget = ({ settings }) => {
       {/* <h3 className="philosofeet-poll-title">{poll.title}</h3> */}
       
       <div className="philosofeet-poll-options" style={{ display: 'flex', flexDirection: layout === 'row' ? 'row' : 'column', flexWrap: 'wrap' }}>
-        {!voted ? (
-            poll.options.map((option, index) => (
+        {poll.options.map((option, index) => {
+          const isSelected = selectedOption === index;
+          return (
             <button 
                 key={index} 
-                className="philosofeet-poll-button"
+              className={`philosofeet-poll-button ${isSelected ? 'selected' : ''}`}
                 onClick={() => handleVote(index)}
-                disabled={voting}
+              disabled={voting || voted}
                 type="button"
+              style={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
             >
+              {/* Checkmark icon for selected option */}
+              {voted && isSelected && (
+                <span className="poll-checkmark" style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'inherit'
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+              )}
                 {option.label}
             </button>
-            ))
-        ) : (
-            <div className="philosofeet-poll-results" style={{ width: '100%' }}>
-                {poll.options.map((option, index) => {
-                    const votes = Number.parseInt(option.votes) || 0;
-                    const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
-                    
-                    return (
-                        <div key={index} className="philosofeet-poll-result-item" style={{ marginBottom: '10px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                                <span className="result-label">{option.label}</span>
-                                <span className="result-percentage">{percentage}% ({votes})</span>
-                            </div>
-                            <div className="result-bar-container" style={{ background: '#eee', height: '10px', borderRadius: '5px', overflow: 'hidden' }}>
-                                <div 
-                                    className="result-bar-fill" 
-                                    style={{ 
-                                        width: `${percentage}%`, 
-                                        background: 'var(--e-global-color-primary, #61ce70)', 
-                                        height: '100%',
-                                        transition: 'width 0.5s ease-out'
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    );
-                })}
-                <div className="philosofeet-poll-thankyou" style={{ marginTop: '15px', fontStyle: 'italic' }}>
-                    Thank you for voting!
-                </div>
-            </div>
-        )}
+          );
+        })}
       </div>
+
     </div>
   );
 };
