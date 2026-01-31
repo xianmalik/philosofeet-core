@@ -108,12 +108,17 @@ class Image_Hover_Swap_Widget extends Base_Widget {
         $repeater->add_control(
             'custom_width',
              [
-                'label' => __('Custom Width (px)', 'philosofeet-core'),
+                'label' => __('Custom Width', 'philosofeet-core'),
                 'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
                 'range' => [
                     'px' => [
                         'min' => 50,
-                        'max' => 500,
+                        'max' => 800,
+                    ],
+                    '%' => [
+                        'min' => 10,
+                        'max' => 100,
                     ],
                 ],
                 'default' => [
@@ -189,13 +194,20 @@ class Image_Hover_Swap_Widget extends Base_Widget {
                     continue;
                 }
                 
+                $width = 200; // Default fallback
+                if (isset($item['custom_width']['size'])) {
+                    $size = (float)$item['custom_width']['size'];
+                    $unit = isset($item['custom_width']['unit']) ? $item['custom_width']['unit'] : 'px';
+                    $width = $size . $unit;
+                }
+                
                 $images[] = [
                     'id' => $item['_id'],
                     'url' => $item['stack_image']['url'],
                     'x' => isset($item['x_offset']) ? (float)$item['x_offset'] : 0,
                     'y' => isset($item['y_offset']) ? (float)$item['y_offset'] : 0,
                     'rotation' => isset($item['rotation']['size']) ? (float)$item['rotation']['size'] : 0,
-                    'width' => isset($item['custom_width']['size']) ? (float)$item['custom_width']['size'] : 200,
+                    'width' => $width,
                 ];
             }
         }
