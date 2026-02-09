@@ -2,7 +2,8 @@
 /**
  * Image Swap Widget
  *
- * Displays an image that swaps to another on hover
+ * Displays an image or video that swaps to another on hover
+ * Videos autoplay on hover without controls
  *
  * @package Philosofeet\Widgets
  */
@@ -38,7 +39,7 @@ class Image_Swap_Widget extends Base_Widget {
    * @return string Widget title.
    */
   public function get_title() {
-    return __('Image Swap', 'philosofeet-core');
+    return __('Media Swap', 'philosofeet-core');
   }
 
   /**
@@ -72,11 +73,32 @@ class Image_Swap_Widget extends Base_Widget {
    * Register widget controls.
    */
   protected function register_controls() {
-    // Content Section - Images
+    // Content Section - Media
     $this->start_controls_section(
       'section_images',
       [
-        'label' => __('Images', 'philosofeet-core'),
+        'label' => __('Media', 'philosofeet-core'),
+      ]
+    );
+
+    // Default Media Type
+    $this->add_control(
+      'default_media_type',
+      [
+        'label' => __('Default Media Type', 'philosofeet-core'),
+        'type' => Controls_Manager::CHOOSE,
+        'options' => [
+          'image' => [
+            'title' => __('Image', 'philosofeet-core'),
+            'icon' => 'eicon-image',
+          ],
+          'video' => [
+            'title' => __('Video', 'philosofeet-core'),
+            'icon' => 'eicon-video-camera',
+          ],
+        ],
+        'default' => 'image',
+        'toggle' => false,
       ]
     );
 
@@ -91,6 +113,53 @@ class Image_Swap_Widget extends Base_Widget {
         'dynamic' => [
           'active' => true,
         ],
+        'media_types' => ['image'],
+        'condition' => [
+          'default_media_type' => 'image',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'default_video',
+      [
+        'label' => __('Default Video', 'philosofeet-core'),
+        'type' => Controls_Manager::MEDIA,
+        'dynamic' => [
+          'active' => true,
+        ],
+        'media_types' => ['video'],
+        'condition' => [
+          'default_media_type' => 'video',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'default_divider',
+      [
+        'type' => Controls_Manager::DIVIDER,
+      ]
+    );
+
+    // Hover Media Type
+    $this->add_control(
+      'hover_media_type',
+      [
+        'label' => __('Hover Media Type', 'philosofeet-core'),
+        'type' => Controls_Manager::CHOOSE,
+        'options' => [
+          'image' => [
+            'title' => __('Image', 'philosofeet-core'),
+            'icon' => 'eicon-image',
+          ],
+          'video' => [
+            'title' => __('Video', 'philosofeet-core'),
+            'icon' => 'eicon-video-camera',
+          ],
+        ],
+        'default' => 'image',
+        'toggle' => false,
       ]
     );
 
@@ -105,6 +174,33 @@ class Image_Swap_Widget extends Base_Widget {
         'dynamic' => [
           'active' => true,
         ],
+        'media_types' => ['image'],
+        'condition' => [
+          'hover_media_type' => 'image',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'hover_video',
+      [
+        'label' => __('Hover Video', 'philosofeet-core'),
+        'type' => Controls_Manager::MEDIA,
+        'dynamic' => [
+          'active' => true,
+        ],
+        'media_types' => ['video'],
+        'condition' => [
+          'hover_media_type' => 'video',
+        ],
+        'description' => __('Video will autoplay on hover without controls', 'philosofeet-core'),
+      ]
+    );
+
+    $this->add_control(
+      'hover_divider',
+      [
+        'type' => Controls_Manager::DIVIDER,
       ]
     );
 
@@ -334,7 +430,7 @@ class Image_Swap_Widget extends Base_Widget {
         ],
         'default' => 'cover',
         'selectors' => [
-          '{{WRAPPER}} .image-swap-container img' => 'object-fit: {{VALUE}};',
+          '{{WRAPPER}} .image-swap-container img, {{WRAPPER}} .image-swap-container video' => 'object-fit: {{VALUE}};',
         ],
       ]
     );
@@ -357,7 +453,7 @@ class Image_Swap_Widget extends Base_Widget {
         ],
         'default' => 'center center',
         'selectors' => [
-          '{{WRAPPER}} .image-swap-container img' => 'object-position: {{VALUE}};',
+          '{{WRAPPER}} .image-swap-container img, {{WRAPPER}} .image-swap-container video' => 'object-position: {{VALUE}};',
         ],
         'condition' => [
           'object_fit!' => 'fill',
@@ -457,14 +553,22 @@ class Image_Swap_Widget extends Base_Widget {
    * @return array Prepared data.
    */
   protected function prepare_widget_data($settings) {
+    // Get default media based on type
+    $default_media_type = !empty($settings['default_media_type']) ? $settings['default_media_type'] : 'image';
+    $default_media_field = $default_media_type === 'video' ? 'default_video' : 'default_image';
+    
+    // Get hover media based on type
+    $hover_media_type = !empty($settings['hover_media_type']) ? $settings['hover_media_type'] : 'image';
+    $hover_media_field = $hover_media_type === 'video' ? 'hover_video' : 'hover_image';
+    
     return [
       'defaultImage' => [
-        'url' => !empty($settings['default_image']['url']) ? $settings['default_image']['url'] : '',
-        'id' => !empty($settings['default_image']['id']) ? $settings['default_image']['id'] : '',
+        'url' => !empty($settings[$default_media_field]['url']) ? $settings[$default_media_field]['url'] : '',
+        'id' => !empty($settings[$default_media_field]['id']) ? $settings[$default_media_field]['id'] : '',
       ],
       'hoverImage' => [
-        'url' => !empty($settings['hover_image']['url']) ? $settings['hover_image']['url'] : '',
-        'id' => !empty($settings['hover_image']['id']) ? $settings['hover_image']['id'] : '',
+        'url' => !empty($settings[$hover_media_field]['url']) ? $settings[$hover_media_field]['url'] : '',
+        'id' => !empty($settings[$hover_media_field]['id']) ? $settings[$hover_media_field]['id'] : '',
       ],
       'altText' => !empty($settings['alt_text']) ? $settings['alt_text'] : '',
       'link' => [
