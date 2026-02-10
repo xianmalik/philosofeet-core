@@ -16,7 +16,7 @@ const ImageHoverSwap = ({ widgetId, settings }) => {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const ro = new ResizeObserver(entries => {
+    const ro = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setContainerWidth(entry.contentRect.width);
       }
@@ -28,9 +28,9 @@ const ImageHoverSwap = ({ widgetId, settings }) => {
 
   const handleImageLoad = (index, event) => {
     const { naturalWidth, naturalHeight } = event.target;
-    setLoadedImages(prev => ({
+    setLoadedImages((prev) => ({
       ...prev,
-      [index]: { w: naturalWidth, h: naturalHeight }
+      [index]: { w: naturalWidth, h: naturalHeight },
     }));
   };
 
@@ -65,7 +65,7 @@ const ImageHoverSwap = ({ widgetId, settings }) => {
       if (!Number.isNaN(Number.parseFloat(widthSetting))) return `${widthSetting}px`;
     }
     return '100px';
-  }
+  };
 
   // Calculate the required container dimensions to wrap all images
   const containerStyle = useMemo(() => {
@@ -107,7 +107,7 @@ const ImageHoverSwap = ({ widgetId, settings }) => {
       if (extentY > maxDistY) maxDistY = extentY;
     });
 
-    // Initial fallback 
+    // Initial fallback
     if (!hasCalculatedAny && images.length > 0) {
       return { height: '400px' };
     }
@@ -116,7 +116,7 @@ const ImageHoverSwap = ({ widgetId, settings }) => {
     const finalHeight = maxDistY * 2;
     // ensure min height just in case
     return {
-      height: `${Math.max(finalHeight, 200)}px`
+      height: `${Math.max(finalHeight, 200)}px`,
     };
   }, [images, loadedImages, containerWidth]);
 
@@ -135,7 +135,7 @@ const ImageHoverSwap = ({ widgetId, settings }) => {
         justifyContent: 'center',
         alignItems: 'center',
         transition: 'height 0.3s ease', // Smooth resize
-        ...containerStyle
+        ...containerStyle,
       }}
     >
       {images.map((img, index) => {

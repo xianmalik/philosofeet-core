@@ -428,7 +428,7 @@ class Image_Swap_Widget extends Base_Widget {
           'none' => __('None', 'philosofeet-core'),
           'scale-down' => __('Scale Down', 'philosofeet-core'),
         ],
-        'default' => 'cover',
+        'default' => 'contain',
         'selectors' => [
           '{{WRAPPER}} .image-swap-container img, {{WRAPPER}} .image-swap-container video' => 'object-fit: {{VALUE}};',
         ],
@@ -556,11 +556,11 @@ class Image_Swap_Widget extends Base_Widget {
     // Get default media based on type
     $default_media_type = !empty($settings['default_media_type']) ? $settings['default_media_type'] : 'image';
     $default_media_field = $default_media_type === 'video' ? 'default_video' : 'default_image';
-    
+
     // Get hover media based on type
     $hover_media_type = !empty($settings['hover_media_type']) ? $settings['hover_media_type'] : 'image';
     $hover_media_field = $hover_media_type === 'video' ? 'hover_video' : 'hover_image';
-    
+
     return [
       'defaultImage' => [
         'url' => !empty($settings[$default_media_field]['url']) ? $settings[$default_media_field]['url'] : '',
@@ -577,6 +577,8 @@ class Image_Swap_Widget extends Base_Widget {
         'nofollow' => !empty($settings['link']['nofollow']) ? $settings['link']['nofollow'] : false,
       ],
       'transitionDuration' => !empty($settings['transition_duration']) ? (int) $settings['transition_duration'] : 300,
+      'objectFit' => !empty($settings['object_fit']) ? $settings['object_fit'] : 'contain',
+      'objectPosition' => !empty($settings['object_position']) ? $settings['object_position'] : 'center center',
     ];
   }
 }

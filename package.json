@@ -1,6 +1,6 @@
 {
   "name": "philosofeet-core",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "description": "Custom Elementor widgets with React-based frontend rendering",
   "type": "module",
   "scripts": {

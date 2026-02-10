@@ -22,7 +22,7 @@ const widgetComponents = {
   'sticky-image': StickyImage,
   'content-slider': ContentSlider,
   'image-hover-swap': ImageHoverSwap,
-  'polling': PollingWidget,
+  polling: PollingWidget,
 };
 
 export default widgetComponents;

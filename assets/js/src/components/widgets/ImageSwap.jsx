@@ -11,7 +11,15 @@ const ImageSwap = ({ widgetId, settings }) => {
   const hoverVideoRef = useRef(null);
   const defaultVideoRef = useRef(null);
 
-  const { defaultImage, hoverImage, altText, link, transitionDuration } = settings;
+  const {
+    defaultImage,
+    hoverImage,
+    altText,
+    link,
+    transitionDuration,
+    objectFit = 'contain',
+    objectPosition = 'center center',
+  } = settings;
 
   // Generate transition style
   const transitionStyle = {
@@ -33,21 +41,21 @@ const ImageSwap = ({ widgetId, settings }) => {
     }
 
     const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.m4v'];
-    return videoExtensions.some(ext => pathname.endsWith(ext));
+    return videoExtensions.some((ext) => pathname.endsWith(ext));
   };
 
   // Handle video playback on hover
   useEffect(() => {
     if (isHovered && hoverVideoRef.current && isVideo(hoverImage)) {
       hoverVideoRef.current.currentTime = 0;
-      hoverVideoRef.current.play().catch(err => console.log('Video play failed:', err));
+      hoverVideoRef.current.play().catch((err) => console.log('Video play failed:', err));
     } else if (!isHovered && hoverVideoRef.current) {
       hoverVideoRef.current.pause();
     }
 
     if (!isHovered && defaultVideoRef.current && isVideo(defaultImage)) {
       defaultVideoRef.current.currentTime = 0;
-      defaultVideoRef.current.play().catch(err => console.log('Video play failed:', err));
+      defaultVideoRef.current.play().catch((err) => console.log('Video play failed:', err));
     } else if (isHovered && defaultVideoRef.current) {
       defaultVideoRef.current.pause();
     }
@@ -66,7 +74,8 @@ const ImageSwap = ({ widgetId, settings }) => {
       height: '100%',
       opacity: isVisible ? 1 : 0,
       pointerEvents: 'none',
-      objectFit: 'cover',
+      objectFit: objectFit,
+      objectPosition: objectPosition,
     };
 
     if (isVideo(mediaData)) {
