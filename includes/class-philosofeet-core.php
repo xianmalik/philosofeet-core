@@ -119,6 +119,12 @@ final class PhilosofeetCORE {
     private function includes() {
         require_once PHILOSOFEET_CORE_PATH . 'includes/class-widget-manager.php';
         require_once PHILOSOFEET_CORE_PATH . 'includes/class-polling-system.php';
+
+        // Load WooCommerce customizations if WooCommerce is active
+        if (class_exists('WooCommerce')) {
+            require_once PHILOSOFEET_CORE_PATH . 'includes/class-woocommerce-customizations.php';
+            new WooCommerce_Customizations();
+        }
     }
 
     /**
@@ -236,6 +242,52 @@ final class PhilosofeetCORE {
             [],
             PHILOSOFEET_CORE_VERSION
         );
+
+        // Enqueue WooCommerce styles on product pages, shop, and cart
+        if (class_exists('WooCommerce') && (is_product() || is_shop() || is_product_category() || is_product_tag() || is_cart() || is_checkout())) {
+            wp_enqueue_style(
+                'philosofeet-core-woocommerce',
+                PHILOSOFEET_CORE_ASSETS_URL . 'css/woocommerce.css',
+                ['woocommerce-general'],
+                PHILOSOFEET_CORE_VERSION,
+                'all'
+            );
+
+            // Add inline style to ensure our styles load last
+            $custom_css = "
+                /* Classic cart */
+                body.woocommerce-cart .wc-proceed-to-checkout a.checkout-button,
+                body.woocommerce-cart .wc-proceed-to-checkout .button.alt {
+                    background-color: #660000 !important;
+                    color: #fff !important;
+                    border-radius: 8px !important;
+                }
+                body.woocommerce-cart .quantity input.qty {
+                    background-color: transparent !important;
+                    color: #fff !important;
+                }
+                /* WooCommerce Blocks */
+                .wc-block-components-button.wp-element-button.wc-block-cart__submit-button.contained,
+                .wc-block-cart__submit-button {
+                    background-color: #660000 !important;
+                    background: #660000 !important;
+                    color: #fff !important;
+                    border-radius: 8px !important;
+                    border: 1px solid #660000 !important;
+                }
+                .wc-block-components-quantity-selector__input {
+                    background-color: transparent !important;
+                    background: transparent !important;
+                    color: #fff !important;
+                }
+                .wc-block-components-quantity-selector__button {
+                    background-color: transparent !important;
+                    background: transparent !important;
+                    color: #fff !important;
+                }
+            ";
+            wp_add_inline_style('philosofeet-core-woocommerce', $custom_css);
+        }
     }
 
     /**
