@@ -1348,22 +1348,21 @@ button.wc-block-components-button.wp-element-button.wc-block-cart__submit-button
 }
 
 /* Block Cart Totals */
-.wc-block-cart__totals,
-.wc-block-components-totals-wrapper {
+.wc-block-cart__totals {
   background-color: rgba(255, 255, 255, 0.03) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 8px !important;
   padding: 25px !important;
 }
 
-/* Coupon panel/container */
-.wc-block-components-panel {
-  padding: 0 !important;
-  margin-bottom: 15px !important;
+.wp-block-woocommerce-checkout-order-summary-cart-items-block,
+.wp-block-woocommerce-checkout-order-summary-subtotal-block {
+  padding: 16px 0 !important;
 }
 
-.wc-block-components-panel__content {
-  padding: 15px !important;
+.wc-block-components-totals-wrapper {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .wc-block-cart__coupon {
@@ -1382,11 +1381,6 @@ button.wc-block-components-button.wp-element-button.wc-block-cart__submit-button
   margin-top: 10px !important;
 }
 
-/* Remove side padding from coupon form wrapper */
-.wp-block-woocommerce-cart-order-summary-coupon-form-block .wc-block-components-totals-wrapper {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
 
 /* Reduce spacing in coupon area */
 .wc-block-cart__totals .wc-block-components-panel {
@@ -1725,7 +1719,6 @@ body.woocommerce-checkout main {
 
 .wc-block-components-checkout-step {
   background-color: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 8px !important;
   margin-bottom: 20px !important;
 }
@@ -1735,9 +1728,6 @@ body.woocommerce-checkout main {
   font-family: 'Playfair Display', 'Georgia', serif !important;
 }
 
-.wc-block-components-checkout-step__content {
-  padding: 25px !important;
-}
 
 /* Block checkout form fields */
 .wc-block-components-text-input label,
@@ -1799,10 +1789,10 @@ body.woocommerce-checkout main {
 
 /* Block order summary */
 .wc-block-components-order-summary {
-  background-color: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 8px !important;
-  padding: 25px !important;
+  /* background-color: rgba(255, 255, 255, 0.03) !important; */
+  /* border: 1px solid rgba(255, 255, 255, 0.1) !important; */
+  /* border-radius: 8px !important; */
+  padding: 15px 0;
 }
 
 .wc-block-components-order-summary__item {
