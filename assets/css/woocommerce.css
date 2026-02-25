@@ -1760,10 +1760,23 @@ body.woocommerce-checkout main {
   outline: none !important;
 }
 
-/* Add a note section */
+/* Payment options & Add a note - fix oversized radio/checkbox inputs */
+.wc-block-checkout__payment-method .wc-block-components-radio-control__input,
 .wc-block-checkout__add-note .wc-block-components-checkbox__input {
   padding: 0 !important;
+  width: 20px !important;
 }
+
+/* Payment method label and description colors */
+.wc-block-components-radio-control__label {
+  color: #fff;
+}
+
+.wc-block-components-radio-control__description {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Add a note section */
 
 .wc-block-checkout__add-note label,
 .wc-block-checkout__add-note .wc-block-components-checkbox__label {
