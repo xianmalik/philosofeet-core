@@ -71,7 +71,7 @@ class WooCommerce_Customizations {
     }
 
     /**
-     * Render rectangular text swatches for each product variation.
+     * Render rectangular swatches grouped by attribute (one row per attribute).
      */
     public function add_variation_swatches() {
         global $product;
@@ -80,65 +80,77 @@ class WooCommerce_Customizations {
             return;
         }
 
-        $variations = $product->get_available_variations();
-        if (empty($variations)) {
+        // All possible values per attribute: ['flavors' => ['Blueberry Nibs', ...], 'size' => [...]]
+        $product_attributes = $product->get_variation_attributes();
+        if (empty($product_attributes)) {
             return;
         }
 
+        // Build image map: attr_key → value → thumbnail URL
+        // Uses the same get_available_variations() + get_image_id() pattern that is known to work.
         $parent_image_id = $product->get_image_id();
-        $swatches        = [];
+        $attr_image_map  = [];
 
-        foreach ($variations as $variation) {
-            $variation_id  = $variation['variation_id'];
-            $variation_obj = wc_get_product($variation_id);
+        foreach ($product->get_available_variations() as $variation) {
+            $variation_obj = wc_get_product($variation['variation_id']);
             if (!$variation_obj) {
                 continue;
             }
 
-            $attr_values = array_filter(array_values($variation['attributes']));
-            $label       = !empty($attr_values) ? implode(' / ', $attr_values) : $variation_obj->get_name();
-
             $image_id  = $variation_obj->get_image_id() ?: $parent_image_id;
             $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'thumbnail') : '';
 
-            $swatches[] = [
-                'id'         => $variation_id,
-                'label'      => $label,
-                'image_url'  => $image_url,
-                'attributes' => wp_json_encode($variation['attributes']),
-            ];
-        }
+            if (!$image_url) {
+                continue;
+            }
 
-        if (empty($swatches)) {
-            return;
+            foreach ($variation['attributes'] as $attr_key => $attr_val) {
+                if ($attr_val !== '' && !isset($attr_image_map[$attr_key][$attr_val])) {
+                    $attr_image_map[$attr_key][$attr_val] = $image_url;
+                }
+            }
         }
-
-        // Get human-readable attribute name (e.g. "Flavours")
-        $first_key  = array_key_first($variations[0]['attributes']);
-        $attr_slug  = str_replace('attribute_', '', $first_key);
-        $attr_label = wc_attribute_label($attr_slug);
 
         ?>
         <div class="philosofeet-variation-swatches">
-            <p class="philosofeet-swatch-header">
-                <?php echo esc_html($attr_label); ?>: <span class="philosofeet-swatch-selected">—</span>
-            </p>
-            <div class="philosofeet-swatch-options">
-                <?php foreach ($swatches as $swatch) : ?>
-                    <button
-                        type="button"
-                        class="philosofeet-swatch"
-                        data-variation-id="<?php echo esc_attr($swatch['id']); ?>"
-                        data-attributes="<?php echo esc_attr($swatch['attributes']); ?>"
-                        data-label="<?php echo esc_attr($swatch['label']); ?>"
-                    >
-                        <?php if ($swatch['image_url']) : ?>
-                            <img src="<?php echo esc_url($swatch['image_url']); ?>" alt="<?php echo esc_attr($swatch['label']); ?>" loading="lazy" />
-                        <?php endif; ?>
-                        <span><?php echo esc_html($swatch['label']); ?></span>
-                    </button>
-                <?php endforeach; ?>
+        <?php foreach ($product_attributes as $attr_name => $values) :
+            $attr_key   = 'attribute_' . sanitize_title($attr_name);
+            $attr_label = wc_attribute_label($attr_name);
+            ?>
+            <div class="philosofeet-attr-row" data-attr-key="<?php echo esc_attr($attr_key); ?>">
+                <p class="philosofeet-swatch-header">
+                    <?php echo esc_html($attr_label); ?>: <span class="philosofeet-swatch-selected">—</span>
+                </p>
+                <div class="philosofeet-swatch-options">
+                    <?php foreach ($values as $value) :
+                        if ($value === '') continue; // skip the "Any" placeholder
+                        $image_url = $attr_image_map[$attr_key][$value] ?? '';
+
+                        // For taxonomy attributes get the term display name
+                        $display = $value;
+                        if (taxonomy_exists('pa_' . $attr_name)) {
+                            $term = get_term_by('slug', $value, 'pa_' . $attr_name);
+                            if ($term) {
+                                $display = $term->name;
+                            }
+                        }
+                    ?>
+                        <button
+                            type="button"
+                            class="philosofeet-swatch"
+                            data-attr-key="<?php echo esc_attr($attr_key); ?>"
+                            data-attr-value="<?php echo esc_attr($value); ?>"
+                            data-label="<?php echo esc_attr($display); ?>"
+                        >
+                            <?php if ($image_url) : ?>
+                                <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($display); ?>" loading="lazy" />
+                            <?php endif; ?>
+                            <span><?php echo esc_html($display); ?></span>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
             </div>
+        <?php endforeach; ?>
         </div>
         <?php
     }

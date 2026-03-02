@@ -2,43 +2,51 @@
   'use strict';
 
   $(document).ready(function () {
-    var $swatches = $('.philosofeet-swatch');
-    var $selected = $('.philosofeet-swatch-selected');
-    if (!$swatches.length) return;
+    var $rows = $('.philosofeet-attr-row');
+    if (!$rows.length) return;
 
     var $form = $('.variations_form');
     if (!$form.length) return;
 
-    $swatches.on('click', function () {
-      var $swatch    = $(this);
-      var attributes = $swatch.data('attributes') || {};
-      var label      = $swatch.data('label') || $swatch.text().trim();
+    $rows.each(function () {
+      var $row      = $(this);
+      var $swatches = $row.find('.philosofeet-swatch');
+      var $selected = $row.find('.philosofeet-swatch-selected');
 
-      if (typeof attributes === 'string') {
-        try { attributes = JSON.parse(attributes); } catch (e) { return; }
-      }
+      $swatches.on('click', function () {
+        var $swatch  = $(this);
+        var attrKey  = $swatch.data('attr-key');
+        var attrVal  = $swatch.data('attr-value');
+        var label    = $swatch.data('label') || attrVal;
 
-      $.each(attributes, function (attrKey, attrVal) {
         var $select = $form.find('select[name="' + attrKey + '"]');
-        if ($select.length && attrVal) {
+        if ($select.length) {
           $select.val(attrVal).trigger('change');
         }
-      });
 
-      $swatches.removeClass('active');
-      $swatch.addClass('active');
-      $selected.text(label);
+        $swatches.removeClass('active');
+        $swatch.addClass('active');
+        $selected.text(label);
+      });
     });
 
+    // Sync active state when WooCommerce resolves a full variation
     $form.on('found_variation', function (event, variation) {
-      $swatches.each(function () {
-        $(this).toggleClass('active', parseInt($(this).data('variation-id')) === variation.variation_id);
+      $rows.each(function () {
+        var $row      = $(this);
+        var attrKey   = $row.data('attr-key');
+        var attrVal   = variation.attributes ? variation.attributes[attrKey] : null;
+
+        $row.find('.philosofeet-swatch').each(function () {
+          $(this).toggleClass('active', $(this).data('attr-value') === attrVal);
+        });
       });
     });
 
+    // Clear active states on form reset
     $form.on('reset_data', function () {
-      $swatches.removeClass('active');
-      $selected.text('—');
+      $rows.find('.philosofeet-swatch').removeClass('active');
+      $rows.find('.philosofeet-swatch-selected').text('—');
     });
   });
 })(jQuery);

@@ -1887,6 +1887,10 @@ body.woocommerce-checkout main {
   margin: 16px 0 4px;
 }
 
+.philosofeet-attr-row {
+  margin-bottom: 16px;
+}
+
 .philosofeet-swatch-header {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
